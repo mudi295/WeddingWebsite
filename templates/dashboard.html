@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Kelola Undangan Anda{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root { --gold: #c5a059; --gold-light: #ecd4a5; }
+    .gradient-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); }
+    .upload-area:hover .upload-icon { transform: scale(1.1); transition: all 0.3s ease; }
+    input::placeholder { font-style: italic; opacity: 0.5; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+            <h1 class="text-4xl font-luxury text-neutral-800 mb-2">Dashboard Pengguna</h1>
+            <p class="text-sm text-gray-400 font-light italic uppercase tracking-[0.2em]">Detail lokasi & waktu adalah kunci kenyamanan tamu</p>
+        </div>
+        <div class="flex items-center space-x-4 bg-white px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="text-right">
+                <p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest">User ID: #{{ current_user.id }}</p>
+                <p class="text-[11px] text-[--gold] font-bold uppercase">{{ current_user.username }}</p>
+            </div>
+            <div class="w-10 h-10 bg-[--gold]/10 rounded-full flex items-center justify-center text-[--gold] font-bold">W</div>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="grid lg:grid-cols-3 gap-12">
+            
+            <div class="lg:col-span-2 space-y-8">
+                
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden relative">
+                    <div class="flex justify-between items-center mb-8">
+                        <div>
+                            <h2 class="text-2xl font-luxury text-neutral-800">Desain Aktif</h2>
+                        </div>
+                        <a href="/catalog" class="px-5 py-2 border border-[--gold] text-[--gold] text-[10px] font-bold rounded-full hover:bg-[--gold] hover:text-white transition-all tracking-widest uppercase">
+                            Ganti Tema
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-6 p-6 bg-neutral-50 rounded-[3rem] border border-neutral-100">
+                        <div class="relative w-32 h-32 rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-gray-200">
+                            <img src="{{ inv.hero_img if inv and inv.hero_img else 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400' }}" 
+                                 class="w-full h-full object-cover" id="img-preview">
+                        </div>
+                        <div>
+                            <span class="text-[9px] bg-[--gold] text-white px-4 py-1 rounded-full font-bold uppercase tracking-widest">Tema: {{ inv.theme_name if inv else 'Luxury' }}</span>
+                            <h3 class="text-2xl font-luxury mt-3 capitalize">Momen Abadi</h3>
+                            <input type="hidden" name="theme" value="{{ inv.theme_name if inv else 'luxury' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-10">
+                    
+                    <div class="space-y-6">
+                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">01. Data Pasangan</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mempelai Pria</label>
+                                <input type="text" name="groom" value="{{ inv.groom_name if inv else '' }}" placeholder="Contoh: Romeo" required 
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mempelai Wanita</label>
+                                <input type="text" name="bride" value="{{ inv.bride_name if inv else '' }}" placeholder="Contoh: Juliet" required 
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">02. Waktu & Visual</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tanggal Acara</label>
+                                <input type="date" name="wedding_date" value="{{ inv.wedding_date if inv else '' }}" required
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Waktu / Jam Mulai</label>
+                                <input type="time" name="wedding_time" value="{{ inv.wedding_time if inv else '' }}" required
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Foto Utama (Hero)</label>
+                            <div class="relative upload-area">
+                                <input type="file" name="hero_img_file" id="hero_img_file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
+                                <div class="w-full px-6 py-10 rounded-3xl border-2 border-dashed border-neutral-200 bg-neutral-50 flex flex-col items-center justify-center transition-all group-hover:border-[--gold]">
+                                    <span class="upload-icon text-3xl mb-3">🖼️</span>
+                                    <p id="file-name" class="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center">Klik untuk Upload Foto</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">03. Lokasi Acara</h3>
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Tempat / Gedung</label>
+                                <input type="text" name="location_name" value="{{ inv.location_name if inv else '' }}" placeholder="Contoh: Hotel Mulia, Grand Ballroom" required 
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Link Google Maps (URL)</label>
+                                <input type="url" name="maps_url" value="{{ inv.maps_url if inv else '' }}" placeholder="https://maps.app.goo.gl/..." required 
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all font-mono text-[11px]">
+                                <p class="text-[9px] text-gray-400 italic ml-1">Buka Google Maps, klik Bagikan, lalu salin link-nya di sini.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">04. Konfigurasi Link</h3>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Custom Link Undangan</label>
+                            <div class="flex items-center">
+                                <span class="hidden sm:inline bg-neutral-100 px-6 py-4 rounded-l-2xl border border-r-0 border-neutral-100 text-gray-400 text-[10px] font-black italic">WEDDING.ID/TO/</span>
+                                <input type="text" name="slug" value="{{ inv.slug if inv else '' }}" placeholder="nama-pasangan" required 
+                                       class="w-full px-6 py-4 rounded-2xl sm:rounded-l-none sm:rounded-r-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all font-bold text-neutral-700">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full gradient-gold text-white font-bold py-6 rounded-2xl shadow-xl shadow-[--gold]/20 hover:brightness-110 active:scale-[0.98] transition-all tracking-[0.4em] text-[10px] uppercase">
+                        Simpan Perubahan & Publish
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="sticky top-28 space-y-8">
+                    <div class="bg-neutral-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
+                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-[--gold]/20 rounded-full blur-3xl transition-all"></div>
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-[10px] font-bold uppercase tracking-widest text-[--gold]">Status: Live</h3>
+                            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+
+                        {% if inv %}
+                            <div class="bg-white/5 p-6 rounded-[2rem] border border-white/10 mb-8">
+                                <p class="text-[9px] text-gray-500 uppercase mb-3 font-bold tracking-widest text-center">Preview Link</p>
+                                <a href="/to/{{ inv.slug }}" target="_blank" class="text-sm font-luxury text-[--gold] block text-center truncate italic">
+                                    wedding.id/to/{{ inv.slug }}
+                                </a>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button type="button" onclick="copyToClipboard('{{ inv.slug }}')" class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-[9px] font-bold tracking-widest transition-all uppercase">Salin</button>
+                                <a href="/to/{{ inv.slug }}" target="_blank" class="bg-[--gold] text-center py-4 rounded-2xl text-[9px] font-bold tracking-widest text-black transition-all uppercase">Buka</a>
+                            </div>
+                        {% else %}
+                            <p class="text-center text-xs text-neutral-500 py-10 italic">Lengkapi data untuk mengaktifkan link.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-white p-8 rounded-[2.5rem] border border-neutral-100 shadow-sm">
+                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-neutral-800 mb-6">Tips Lokasi</h4>
+                        <p class="text-[11px] text-neutral-500 leading-relaxed italic">Pastikan link Google Maps valid agar tamu tidak salah alamat. Gunakan fitur "Bagikan" -> "Salin Link" di Google Maps.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('hero_img_file').onchange = function (evt) {
+        const [file] = this.files;
+        if (file) {
+            document.getElementById('file-name').innerText = file.name;
+            document.getElementById('img-preview').src = URL.createObjectURL(file);
+        }
+    };
+
+    function copyToClipboard(slug) {
+        const fullUrl = window.location.origin + '/to/' + slug;
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            alert('Link berhasil disalin!');
+        });
+    }
+</script>
+{% endblock %}

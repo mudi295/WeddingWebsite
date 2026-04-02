@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Wedding of {{ data.groom_name }} & {{ data.bride_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #c5a059; --dark: #121212; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark); color: #fff; }
+        .font-luxury { font-family: 'Cormorant Garamond', serif; }
+        
+        /* Background Image dengan Overlay Gelap */
+        .hero-bg {
+            /* Menggunakan data.hero_img dari database */
+            background: linear-gradient(to bottom, rgba(18,18,18,0.3), rgba(18,18,18,0.9)), 
+                        url('{{ data.hero_img if data.hero_img else "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200" }}');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .gold-border { border: 1px solid rgba(197, 160, 89, 0.4); }
+        .gold-text { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fadeIn 1.5s ease-out forwards; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <section class="hero-bg min-h-screen flex items-center justify-center relative px-6">
+        <div class="max-w-3xl w-full text-center space-y-8 animate-fade">
+            <p class="uppercase tracking-[0.5em] text-[10px] gold-text font-bold">The Wedding Celebration of</p>
+            
+            <div class="py-10 border-y gold-border relative">
+                <div class="absolute -top-2 -left-2 text-xl gold-text">✧</div>
+                <div class="absolute -bottom-2 -right-2 text-xl gold-text">✧</div>
+                
+                <h1 class="font-luxury text-7xl md:text-9xl leading-none mb-4 italic">{{ data.groom_name }}</h1>
+                <p class="font-luxury text-4xl gold-text my-4">&</p>
+                <h1 class="font-luxury text-7xl md:text-9xl leading-none italic">{{ data.bride_name }}</h1>
+            </div>
+
+            <div class="space-y-4 pt-6">
+                <p class="uppercase tracking-[0.3em] text-xs font-light">Save the Date</p>
+                <p class="font-luxury text-3xl italic gold-text">
+                    {{ data.wedding_date if data.wedding_date else '20 . 12 . 2026' }}
+                </p>
+                <p class="text-[10px] tracking-widest text-gray-400 uppercase">PUKUL {{ data.wedding_time if data.wedding_time else '09:00' }} WIB</p>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-center opacity-50">
+            <p class="text-[8px] uppercase tracking-[0.3em] mb-2">Scroll Down</p>
+            <div class="w-[1px] h-12 bg-white mx-auto"></div>
+        </div>
+    </section>
+
+    <section class="py-32 px-6 bg-[#181818] text-center">
+        <div class="max-w-xl mx-auto gold-border p-12 rounded-[50px]">
+            <h2 class="font-luxury text-4xl mb-10 gold-text italic">Wedding Event</h2>
+            
+            <div class="space-y-12">
+                <div>
+                    <h3 class="uppercase tracking-widest text-sm font-bold mb-2">Waktu & Tempat</h3>
+                    <p class="text-xs text-gray-400 font-light leading-relaxed mb-4">
+                        Pukul {{ data.wedding_time if data.wedding_time else '09:00' }} - Selesai
+                    </p>
+                    
+                    <p class="text-sm gold-text font-luxury italic text-xl">
+                        {{ data.location_name if data.location_name else 'Lokasi Belum Diatur' }}
+                    </p>
+                </div>
+
+                <div class="h-[1px] w-12 bg-gray-800 mx-auto"></div>
+
+                <div class="px-4 text-[11px] text-gray-500 italic leading-relaxed">
+                    "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kedua mempelai."
+                </div>
+            </div>
+
+            {% if data.maps_url %}
+            <a href="{{ data.maps_url }}" target="_blank" class="inline-block mt-16 px-8 py-4 bg-gold text-black text-[10px] font-bold tracking-[0.2em] rounded-full uppercase hover:bg-white transition-all shadow-lg shadow-[--gold]/20">
+                Buka Google Maps
+            </a>
+            {% else %}
+            <p class="mt-10 text-[9px] text-gray-600 italic tracking-widest uppercase">Link lokasi belum tersedia</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer class="py-20 text-center opacity-30">
+        <p class="text-[10px] tracking-[0.5em] uppercase italic">Created by Wedding.id</p>
+    </footer>
+
+</body>
+</html>

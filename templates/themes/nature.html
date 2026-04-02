@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@0,700;1,700&family=Inter:wght@300&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f4f7f4; color: #2d4a2d; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/leaves.png')]">
+    <div class="bg-white/80 backdrop-blur-md p-12 rounded-t-full border-t-8 border-[#5d7a5d] text-center max-w-md shadow-2xl">
+        <p class="uppercase tracking-[0.4em] text-[10px] mb-8">Save Our Date</p>
+        <h1 class="font-serif text-5xl mb-2">{{ data.groom_name }}</h1>
+        <p class="italic text-2xl font-serif">&</p>
+        <h1 class="font-serif text-5xl mb-8">{{ data.bride_name }}</h1>
+        <div class="h-[1px] w-12 bg-[#5d7a5d] mx-auto mb-8"></div>
+        <p class="text-xs tracking-widest font-bold">DECEMBER 12, 2026</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WeddingID - Premium Digital Invitation{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --gold: #c5a059; --dark: #1a1a1a; --cream: #fdfaf7; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--cream); color: var(--dark); overflow-x: hidden; }
+        .font-luxury { font-family: 'Cormorant Garamond', serif; }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            transition: all 0.4s ease;
+        }
+        .nav-scrolled {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+        }
+
+        .toast-active { animation: slideIn 0.5s ease-out forwards; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        #mobile-menu { transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1.0); }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <nav id="main-nav" class="glass-nav sticky top-0 z-[100] border-b border-gray-100/50 px-6 py-5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="/" class="group">
+                <span class="text-2xl font-luxury font-bold tracking-tighter text-[--gold]">
+                    WEDDING<span class="text-neutral-400 font-light">.ID</span>
+                </span>
+            </a>
+            
+            <div class="hidden md:flex items-center space-x-8 text-[10px] font-bold tracking-[0.2em] text-neutral-500">
+                <a href="/" class="hover:text-[--gold] transition-colors">HOME</a>
+                
+                <a href="/catalog" class="hover:text-[--gold] transition-colors">CATALOG</a>
+
+                {% if current_user.is_authenticated %}
+                    <a href="/dashboard" class="hover:text-[--gold] transition-colors">DASHBOARD</a>
+                    <a href="/logout" class="text-red-400 hover:text-red-600 transition-colors">LOGOUT</a>
+                {% else %}
+                    <a href="/login" class="hover:text-[--gold] transition-colors uppercase">Login</a>
+                    <a href="/register" class="bg-[--gold] text-white px-8 py-3 rounded-full hover:bg-black transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[--gold]/20">
+                        DAFTAR
+                    </a>
+                {% endif %}
+            </div>
+
+            <button onclick="toggleMobileMenu()" class="md:hidden text-[--gold] focus:outline-none p-1">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobile-menu" class="fixed inset-0 z-[150] bg-white translate-x-full md:hidden">
+        <div class="flex flex-col h-full p-8">
+            <div class="flex justify-between items-center mb-16">
+                <span class="font-luxury text-[--gold] text-2xl font-bold italic">WeddingID</span>
+                <button onclick="toggleMobileMenu()" class="text-neutral-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="flex flex-col space-y-8 text-center">
+                <a href="/" class="text-2xl font-luxury text-neutral-800" onclick="toggleMobileMenu()">Home</a>
+                
+                <a href="/catalog" class="text-2xl font-luxury text-neutral-800" onclick="toggleMobileMenu()">Catalog</a>
+
+                {% if current_user.is_authenticated %}
+                    <a href="/dashboard" class="text-2xl font-luxury text-neutral-800" onclick="toggleMobileMenu()">Dashboard</a>
+                    <a href="/logout" class="text-lg font-bold tracking-widest text-red-400 uppercase" onclick="toggleMobileMenu()">Logout</a>
+                {% else %}
+                    <a href="/login" class="text-2xl font-luxury text-neutral-800" onclick="toggleMobileMenu()">Login</a>
+                    <a href="/register" class="bg-[--gold] text-white px-10 py-5 rounded-full font-bold tracking-widest text-xs shadow-xl mx-auto" onclick="toggleMobileMenu()">
+                        DAFTAR SEKARANG
+                    </a>
+                {% endif %}
+            </div>
+            
+            <div class="mt-auto text-center">
+                <p class="text-[9px] tracking-[0.4em] text-gray-300 uppercase">Premium Digital Solution</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed top-24 right-6 z-[110] space-y-3 pointer-events-none">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="toast-active pointer-events-auto bg-white border-l-4 border-[--gold] px-6 py-4 shadow-2xl rounded-r-xl flex items-center space-x-4 min-w-[280px]">
+                        <div class="bg-[--gold]/10 p-2 rounded-full">
+                            <svg class="w-4 h-4 text-[--gold]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <p class="text-[11px] font-bold text-neutral-600 uppercase tracking-wider">{{ message }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-white border-t border-gray-50 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-8 text-center">
+            <h2 class="font-luxury text-3xl text-[--gold] mb-4">WEDDING.ID</h2>
+            <p class="text-gray-400 text-sm max-w-sm mx-auto font-light leading-relaxed mb-10">
+                Layanan pembuatan undangan digital nomor satu di Indonesia. Cepat, murah, dan hasil memuaskan.
+            </p>
+            <div class="pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] tracking-[0.3em] text-gray-400 uppercase font-bold">
+                <p>© 2026 Wedding.ID — Solusi Momen Spesial Anda</p>
+                <div class="flex space-x-6 uppercase tracking-[0.1em]">
+                    <a href="#" class="hover:text-[--gold]">Instagram</a>
+                    <a href="#" class="hover:text-[--gold]">WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = menu.classList.contains('translate-x-0');
+            if (!isOpen) {
+                menu.classList.remove('translate-x-full');
+                menu.classList.add('translate-x-0');
+                document.body.style.overflow = 'hidden';
+            } else {
+                menu.classList.remove('translate-x-0');
+                menu.classList.add('translate-x-full');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('nav-scrolled');
+            } else {
+                nav.classList.remove('nav-scrolled');
+            }
+        });
+
+        setTimeout(() => {
+            const toasts = document.querySelectorAll('.toast-active');
+            toasts.forEach(t => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateX(50px)';
+                t.style.transition = 'all 0.6s ease';
+                setTimeout(() => t.remove(), 600);
+            });
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

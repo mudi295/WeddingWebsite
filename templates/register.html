@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Daftar Akun - WeddingID{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Animasi fade-in yang lembut */
+    .fade-up-elegant {
+        animation: fadeUpElegant 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes fadeUpElegant {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-[85vh] flex items-center justify-center p-6 bg-[#fcfaf7]">
+    
+    <div class="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 w-full max-w-md border border-white/50 fade-up-elegant">
+        
+        <div class="text-center mb-10">
+            <span class="text-[10px] tracking-[0.4em] text-[#c5a059] uppercase font-bold">Start Your Journey</span>
+            <h1 class="text-4xl font-luxury text-neutral-800 mt-2 mb-3">Create Account</h1>
+            <p class="text-gray-400 text-xs italic font-light tracking-wide">Langkah awal menuju hari bahagia Anda</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="mb-6 text-[11px] text-red-500 bg-red-50/50 p-4 rounded-2xl border border-red-100 animate-pulse text-center uppercase tracking-widest">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        <form method="POST" class="space-y-6">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-1">Choose Username</label>
+                <input type="text" name="username" placeholder="misal: romeo123" required 
+                    class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] transition-all duration-500 placeholder:text-gray-300">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-1">Create Password</label>
+                <input type="password" name="password" placeholder="••••••••" required 
+                    class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] transition-all duration-500 placeholder:text-gray-300">
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" 
+                    class="w-full bg-[#c5a059] text-white font-bold py-4 rounded-2xl shadow-xl shadow-[#c5a059]/30 hover:bg-black hover:shadow-black/20 transition-all duration-700 transform active:scale-95 tracking-[0.2em] text-[10px]">
+                    DAFTAR SEKARANG
+                </button>
+            </div>
+        </form>
+        
+        <div class="mt-12 pt-8 border-t border-gray-50 text-center">
+            <p class="text-[10px] text-gray-400 uppercase tracking-[0.3em]">
+                Sudah memiliki akun? 
+                <a href="/login" class="text-[#c5a059] font-black hover:text-black transition-colors duration-300">
+                    MASUK DISINI
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

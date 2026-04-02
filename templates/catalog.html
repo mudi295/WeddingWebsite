@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Katalog Tema - WeddingID{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-16">
+    <div class="text-center mb-16">
+        <span class="text-[#c5a059] font-bold tracking-[0.4em] text-[10px] uppercase">Design Collections</span>
+        <h1 class="text-5xl font-luxury mt-4 mb-4">Pilih Tema Undangan</h1>
+        <p class="text-gray-400 font-light italic">Temukan desain yang sempurna untuk cerita cinta kalian</p>
+    </div>
+
+    <div class="flex justify-center space-x-4 mb-12 overflow-x-auto pb-4" id="filter-container">
+        <button onclick="filterThemes('all')" class="filter-btn active px-6 py-2 bg-black text-white rounded-full text-[10px] font-bold tracking-widest uppercase transition-all">Semua</button>
+        <button onclick="filterThemes('Modern')" class="filter-btn px-6 py-2 bg-white border border-gray-100 text-gray-500 rounded-full text-[10px] font-bold tracking-widest uppercase hover:border-[#c5a059] transition-all">Modern</button>
+        <button onclick="filterThemes('Elegant')" class="filter-btn px-6 py-2 bg-white border border-gray-100 text-gray-500 rounded-full text-[10px] font-bold tracking-widest uppercase hover:border-[#c5a059] transition-all">Elegant</button>
+        <button onclick="filterThemes('Classic')" class="filter-btn px-6 py-2 bg-white border border-gray-100 text-gray-500 rounded-full text-[10px] font-bold tracking-widest uppercase hover:border-[#c5a059] transition-all">Classic</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="theme-grid">
+        {% for theme in themes %}
+        <div class="theme-item group bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500" data-category="{{ theme.tag }}">
+            <div class="relative h-64 overflow-hidden">
+                <img src="{{ theme.img }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[8px] font-black tracking-widest uppercase text-[#c5a059]">
+                    {{ theme.tag }}
+                </div>
+            </div>
+            <div class="p-6 text-center">
+                <h3 class="font-luxury text-xl mb-4">{{ theme.name }}</h3>
+                <div class="flex gap-2">
+                    <a href="/select-theme/{{ theme.id }}" class="flex-1 bg-[#c5a059] text-white py-3 rounded-xl text-[9px] font-bold tracking-widest uppercase hover:bg-black transition-colors">
+                        Pilih Tema
+                    </a>
+                    <a href="/preview/{{ theme.id }}" target="_blank" class="px-4 py-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors" title="Preview Desain">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function filterThemes(category) {
+        const items = document.querySelectorAll('.theme-item');
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        // Update UI Tombol
+        buttons.forEach(btn => {
+            if(btn.innerText.toLowerCase() === category.toLowerCase() || (category === 'all' && btn.innerText.toLowerCase() === 'semua')) {
+                btn.classList.remove('bg-white', 'text-gray-500');
+                btn.classList.add('bg-black', 'text-white');
+            } else {
+                btn.classList.remove('bg-black', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-500');
+            }
+        });
+
+        // Logika Filtering
+        items.forEach(item => {
+            const itemCategory = item.getAttribute('data-category');
+            if (category === 'all' || itemCategory === category) {
+                item.style.display = 'block';
+                setTimeout(() => item.style.opacity = '1', 10);
+            } else {
+                item.style.opacity = '0';
+                setTimeout(() => item.style.display = 'none', 300);
+            }
+        });
+    }
+</script>
+{% endblock %}

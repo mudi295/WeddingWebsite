@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Login - WeddingID{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Animasi masuk lembut untuk card */
+    .fade-in-soft {
+        animation: fadeInSoft 1s ease-out forwards;
+    }
+
+    @keyframes fadeInSoft {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center p-6 bg-[#fcfaf7]">
+    
+    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-gray-100 fade-in-soft">
+        
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-luxury text-[#c5a059] mb-2">Welcome Back</h1>
+            <p class="text-gray-400 text-sm font-light">Masuk untuk mengelola hari bahagia Anda</p>
+        </div>
+        
+        <form method="POST" class="space-y-6">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-1">Username</label>
+                <input type="text" name="username" required 
+                    class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] transition-all duration-300 placeholder:text-gray-300"
+                    placeholder="Masukkan username">
+            </div>
+            
+            <div class="space-y-2">
+                <label class="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 ml-1">Password</label>
+                <input type="password" name="password" required 
+                    class="w-full px-5 py-4 rounded-2xl border border-gray-100 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#c5a059]/20 focus:border-[#c5a059] transition-all duration-300 placeholder:text-gray-300"
+                    placeholder="••••••••">
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" 
+                    class="w-full bg-[#c5a059] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#c5a059]/20 hover:bg-black hover:shadow-black/10 transition-all duration-500 transform active:scale-95 tracking-widest text-xs">
+                    LOG IN
+                </button>
+            </div>
+        </form>
+        
+        <div class="mt-10 pt-6 border-t border-gray-50 text-center">
+            <p class="text-xs text-gray-400 uppercase tracking-widest">
+                Belum punya akun? 
+                <a href="/register" class="text-[#c5a059] font-bold hover:underline decoration-2 underline-offset-4">
+                    Daftar Sekarang
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
