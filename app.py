@@ -83,47 +83,75 @@ def dashboard():
     inv = Invitation.query.filter_by(user_id=current_user.id).first()
     
     if request.method == 'POST':
-        # 1. AMBIL DATA DARI FORM (WAJIB ADA INI)
+        # Ambil data teks
         l_name = request.form.get('location_name')
         m_url = request.form.get('maps_url')
+        g_parents = request.form.get('groom_parents')
+        b_parents = request.form.get('bride_parents')
         
-        # Ambil file gambar
-        file = request.files.get('hero_img_file')
-        hero_img_url = inv.hero_img if inv else '' 
+        # Dictionary untuk memproses upload foto secara dinamis
+        photo_fields = {
+            'hero_img_file': 'hero_img',
+            'couple_img_file': 'couple_img',
+            'groom_img_file': 'groom_img',
+            'bride_img_file': 'bride_img'
+        }
+        
+        # Simpan URL lama atau default kosong
+        image_urls = {
+            'hero_img': inv.hero_img if inv else '',
+            'couple_img': inv.couple_img if inv else '',
+            'groom_img': inv.groom_img if inv else '',
+            'bride_img': inv.bride_img if inv else ''
+        }
 
-        if file and allowed_file(file.filename):
-            filename = secure_filename(f"user_{current_user.id}_{file.filename}")
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            hero_img_url = f"/static/uploads/{filename}"
+        # Loop proses upload
+        for form_name, db_column in photo_fields.items():
+            file = request.files.get(form_name)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(f"user_{current_user.id}_{db_column}_{file.filename}")
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image_urls[db_column] = f"/static/uploads/{filename}"
 
-        # 2. PROSES UPDATE ATAU BUAT BARU
         if inv:
+            # Update data yang sudah ada
             inv.groom_name = request.form.get('groom')
             inv.bride_name = request.form.get('bride')
+            inv.groom_parents = g_parents
+            inv.bride_parents = b_parents
             inv.wedding_date = request.form.get('wedding_date')
             inv.wedding_time = request.form.get('wedding_time')
             inv.slug = request.form.get('slug')
-            inv.hero_img = hero_img_url
-            # Simpan variabel yang baru diambil tadi ke kolom database
             inv.location_name = l_name
             inv.maps_url = m_url
+            # Update Foto
+            inv.hero_img = image_urls['hero_img']
+            inv.couple_img = image_urls['couple_img']
+            inv.groom_img = image_urls['groom_img']
+            inv.bride_img = image_urls['bride_img']
         else:
+            # Buat baru
             new_inv = Invitation(
                 user_id=current_user.id,
                 groom_name=request.form.get('groom'),
                 bride_name=request.form.get('bride'),
+                groom_parents=g_parents,
+                bride_parents=b_parents,
                 wedding_date=request.form.get('wedding_date'),
                 wedding_time=request.form.get('wedding_time'),
-                location_name=l_name, # Gunakan variabel l_name
-                maps_url=m_url,       # Gunakan variabel m_url
+                location_name=l_name,
+                maps_url=m_url,
                 slug=request.form.get('slug'),
-                theme_name=request.form.get('theme', 'luxury'),
-                hero_img=hero_img_url
+                theme_name=request.form.get('luxury'),
+                hero_img=image_urls['hero_img'],
+                couple_img=image_urls['couple_img'],
+                groom_img=image_urls['groom_img'],
+                bride_img=image_urls['bride_img']
             )
             db.session.add(new_inv)
         
         db.session.commit()
-        flash('Undangan berhasil diperbarui!')
+        flash('Undangan berhasil diperbarui dengan foto terbaru!')
         return redirect(url_for('dashboard'))
 
     return render_template('dashboard.html', inv=inv)

@@ -1,166 +1,235 @@
 {% extends "base.html" %}
-{% block title %}Dashboard - Kelola Undangan Anda{% endblock %}
+{% block title %}Dashboard - Kelola Undangan Luxury{% endblock %}
 
 {% block extra_css %}
 <style>
-    :root { --gold: #c5a059; --gold-light: #ecd4a5; }
+    :root { --gold: #c5a059; --gold-light: #ecd4a5; --gold-soft: rgba(197, 160, 89, 0.1); }
     .gradient-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); }
-    .upload-area:hover .upload-icon { transform: scale(1.1); transition: all 0.3s ease; }
-    input::placeholder { font-style: italic; opacity: 0.5; }
+    .gold-text { color: var(--gold); }
+    
+    /* Input & Placeholder styling */
+    input::placeholder, textarea::placeholder { font-style: italic; opacity: 0.5; }
+    
+    /* Custom Scrollbar for better UX */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 10px; }
+
+    /* Upload Area Styling */
+    .upload-card {
+        border: 2px dashed #e5e7eb;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .upload-card:hover { border-color: var(--gold); background-color: white; }
+    .upload-card.has-image { border-style: solid; border-color: var(--gold); }
+    
+    /* Preview Image Styling dalam upload card */
+    .preview-container {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        opacity: 0; transition: opacity 0.3s ease;
+        z-index: 10;
+    }
+    .upload-card.has-image .preview-container { opacity: 1; }
+    .upload-card.has-image .upload-content { opacity: 0; }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-6 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
     <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
+        <div data-aos="fade-right">
             <h1 class="text-4xl font-luxury text-neutral-800 mb-2">Dashboard Pengguna</h1>
-            <p class="text-sm text-gray-400 font-light italic uppercase tracking-[0.2em]">Detail lokasi & waktu adalah kunci kenyamanan tamu</p>
+            <p class="text-sm text-gray-400 font-light italic uppercase tracking-[0.2em]">Personalisasi Momen Abadi Anda dalam Tema Luxury</p>
         </div>
-        <div class="flex items-center space-x-4 bg-white px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+        <div class="flex items-center space-x-4 bg-white px-6 py-3 rounded-2xl border border-gray-100 shadow-sm" data-aos="fade-left">
             <div class="text-right">
                 <p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest">User ID: #{{ current_user.id }}</p>
-                <p class="text-[11px] text-[--gold] font-bold uppercase">{{ current_user.username }}</p>
+                <p class="text-[11px] gold-text font-bold uppercase">{{ current_user.username }}</p>
             </div>
-            <div class="w-10 h-10 bg-[--gold]/10 rounded-full flex items-center justify-center text-[--gold] font-bold">W</div>
+            <div class="w-11 h-11 bg-[--gold-soft] rounded-full flex items-center justify-center gold-text font-bold text-lg border border-[--gold]/20">W</div>
         </div>
     </div>
 
     <form method="POST" enctype="multipart/form-data">
-        <div class="grid lg:grid-cols-3 gap-12">
+        <div class="grid lg:grid-cols-3 gap-10">
             
-            <div class="lg:col-span-2 space-y-8">
+            <div class="lg:col-span-2 space-y-10">
                 
-                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden relative">
-                    <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h2 class="text-2xl font-luxury text-neutral-800">Desain Aktif</h2>
+                <div class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-8" data-aos="fade-up">
+                    <h3 class="text-xs font-bold gold-text uppercase tracking-[0.3em] flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-[--gold-soft] flex items-center justify-center mr-3 border border-[--gold]/20">01</span> Manajemen Visual
+                    </h3>
+
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Foto Hero Welcome (Cover Landscape)</label>
+                            <div class="upload-card rounded-3xl p-4 aspect-[16/9] flex flex-col items-center justify-center text-center group {% if inv and inv.hero_img %}has-image{% endif %}" id="drop-hero">
+                                <div class="preview-container">
+                                    <img src="{{ inv.hero_img if inv and inv.hero_img else '' }}" class="w-full h-full object-cover rounded-2xl" id="prev-hero">
+                                </div>
+                                <div class="upload-content space-y-2 relative z-20 transition-opacity duration-300">
+                                    <span class="text-3xl upload-icon transition-transform duration-300 group-hover:scale-110 block">🖼️</span>
+                                    <p class="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Klik/Drop Foto Hero</p>
+                                </div>
+                                <input type="file" name="hero_img_file" id="hero_img_file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30">
+                            </div>
                         </div>
-                        <a href="/catalog" class="px-5 py-2 border border-[--gold] text-[--gold] text-[10px] font-bold rounded-full hover:bg-[--gold] hover:text-white transition-all tracking-widest uppercase">
-                            Ganti Tema
-                        </a>
+
+                        <div class="space-y-3">
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Foto Romantis Berdua (Portrait Utama)</label>
+                            <div class="upload-card rounded-3xl p-4 aspect-[3/4] flex flex-col items-center justify-center text-center group {% if inv and inv.couple_img %}has-image{% endif %}" id="drop-couple">
+                                <div class="preview-container">
+                                    <img src="{{ inv.couple_img if inv and inv.couple_img else '' }}" class="w-full h-full object-cover rounded-2xl" id="prev-couple">
+                                </div>
+                                <div class="upload-content space-y-2 relative z-20 transition-opacity duration-300">
+                                    <span class="text-3xl upload-icon transition-transform duration-300 group-hover:scale-110 block">👩‍❤️‍👨</span>
+                                    <p class="text-[10px] text-neutral-400 font-medium uppercase tracking-wider">Klik/Drop Foto Berdua</p>
+                                </div>
+                                <input type="file" name="couple_img_file" id="couple_img_file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30">
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-6 p-6 bg-neutral-50 rounded-[3rem] border border-neutral-100">
-                        <div class="relative w-32 h-32 rounded-3xl overflow-hidden shadow-lg border-4 border-white bg-gray-200">
-                            <img src="{{ inv.hero_img if inv and inv.hero_img else 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400' }}" 
-                                 class="w-full h-full object-cover" id="img-preview">
-                        </div>
-                        <div>
-                            <span class="text-[9px] bg-[--gold] text-white px-4 py-1 rounded-full font-bold uppercase tracking-widest">Tema: {{ inv.theme_name if inv else 'Luxury' }}</span>
-                            <h3 class="text-2xl font-luxury mt-3 capitalize">Momen Abadi</h3>
-                            <input type="hidden" name="theme" value="{{ inv.theme_name if inv else 'luxury' }}">
+
+                    <div class="space-y-4 pt-6 border-t border-gray-100">
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Foto Profil Mempelai (Portrait Terpisah)</label>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="upload-card rounded-2xl p-3 aspect-[3/4] flex flex-col items-center justify-center text-center group {% if inv and inv.groom_img %}has-image{% endif %}" id="drop-groom">
+                                <div class="preview-container">
+                                    <img src="{{ inv.groom_img if inv and inv.groom_img else '' }}" class="w-full h-full object-cover rounded-xl" id="prev-groom">
+                                </div>
+                                <div class="upload-content space-y-1 relative z-20">
+                                    <span class="text-2xl block">🤵</span>
+                                    <p class="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Foto Pria</p>
+                                </div>
+                                <input type="file" name="groom_img_file" id="groom_img_file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30">
+                            </div>
+                            <div class="upload-card rounded-2xl p-3 aspect-[3/4] flex flex-col items-center justify-center text-center group {% if inv and inv.bride_img %}has-image{% endif %}" id="drop-bride">
+                                <div class="preview-container">
+                                    <img src="{{ inv.bride_img if inv and inv.bride_img else '' }}" class="w-full h-full object-cover rounded-xl" id="prev-bride">
+                                </div>
+                                <div class="upload-content space-y-1 relative z-20">
+                                    <span class="text-2xl block">👰</span>
+                                    <p class="text-[9px] text-neutral-400 font-bold uppercase tracking-wider">Foto Wanita</p>
+                                </div>
+                                <input type="file" name="bride_img_file" id="bride_img_file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30">
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-10">
+                <div class="bg-white p-8 md:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-10" data-aos="fade-up">
                     
                     <div class="space-y-6">
-                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">01. Data Pasangan</h3>
+                        <h3 class="text-xs font-bold gold-text uppercase tracking-[0.3em] flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-[--gold-soft] flex items-center justify-center mr-3 border border-[--gold]/20">02</span> Data Pasangan
+                        </h3>
                         <div class="grid md:grid-cols-2 gap-6">
                             <div class="space-y-2">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mempelai Pria</label>
-                                <input type="text" name="groom" value="{{ inv.groom_name if inv else '' }}" placeholder="Contoh: Romeo" required 
-                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Panggilan Pria</label>
+                                <input type="text" name="groom" value="{{ inv.groom_name if inv else '' }}" placeholder="Romeo" required 
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold-soft] outline-none transition-all">
                             </div>
                             <div class="space-y-2">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mempelai Wanita</label>
-                                <input type="text" name="bride" value="{{ inv.bride_name if inv else '' }}" placeholder="Contoh: Juliet" required 
-                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Panggilan Wanita</label>
+                                <input type="text" name="bride" value="{{ inv.bride_name if inv else '' }}" placeholder="Juliet" required 
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold-soft] outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6 pt-2">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Orang Tua Pria (Putra Dari...)</label>
+                                <input type="text" name="groom_parents" value="{{ inv.groom_parents if inv else '' }}" placeholder="Bpk. Alex & Ibu Catherine"
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white outline-none transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Orang Tua Wanita (Putri Dari...)</label>
+                                <input type="text" name="bride_parents" value="{{ inv.bride_parents if inv else '' }}" placeholder="Bpk. Julian & Ibu Maria"
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white outline-none transition-all">
                             </div>
                         </div>
                     </div>
 
-                    <div class="space-y-6">
-                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">02. Waktu & Visual</h3>
-                        <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-6 pt-10 border-t border-gray-100">
+                        <h3 class="text-xs font-bold gold-text uppercase tracking-[0.3em] flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-[--gold-soft] flex items-center justify-center mr-3 border border-[--gold]/20">03</span> Waktu & Lokasi
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Tanggal Acara</label>
                                 <input type="date" name="wedding_date" value="{{ inv.wedding_date if inv else '' }}" required
-                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold-soft] outline-none transition-all">
                             </div>
                             <div class="space-y-2">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Waktu / Jam Mulai</label>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Jam Mulai Akad (Contoh: 09:00)</label>
                                 <input type="time" name="wedding_time" value="{{ inv.wedding_time if inv else '' }}" required
-                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white outline-none transition-all">
                             </div>
                         </div>
-                        <div class="space-y-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Foto Utama (Hero)</label>
-                            <div class="relative upload-area">
-                                <input type="file" name="hero_img_file" id="hero_img_file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20">
-                                <div class="w-full px-6 py-10 rounded-3xl border-2 border-dashed border-neutral-200 bg-neutral-50 flex flex-col items-center justify-center transition-all group-hover:border-[--gold]">
-                                    <span class="upload-icon text-3xl mb-3">🖼️</span>
-                                    <p id="file-name" class="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center">Klik untuk Upload Foto</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-6">
-                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">03. Lokasi Acara</h3>
                         <div class="space-y-4">
                             <div class="space-y-2">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Tempat / Gedung</label>
-                                <input type="text" name="location_name" value="{{ inv.location_name if inv else '' }}" placeholder="Contoh: Hotel Mulia, Grand Ballroom" required 
-                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nama Gedung & Kota</label>
+                                <input type="text" name="location_name" value="{{ inv.location_name if inv else '' }}" placeholder="Hotel Mulia, Jakarta Selatan" required 
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white outline-none transition-all">
                             </div>
                             <div class="space-y-2">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Link Google Maps (URL)</label>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Link Google Maps (URL Bagikan)</label>
                                 <input type="url" name="maps_url" value="{{ inv.maps_url if inv else '' }}" placeholder="https://maps.app.goo.gl/..." required 
-                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all font-mono text-[11px]">
-                                <p class="text-[9px] text-gray-400 italic ml-1">Buka Google Maps, klik Bagikan, lalu salin link-nya di sini.</p>
+                                       class="w-full px-6 py-4 rounded-2xl border border-neutral-100 bg-neutral-50 focus:bg-white outline-none transition-all font-mono text-[11px]">
                             </div>
                         </div>
                     </div>
 
-                    <div class="space-y-6">
-                        <h3 class="text-xs font-bold text-[--gold] uppercase tracking-[0.3em]">04. Konfigurasi Link</h3>
-                        <div class="space-y-2">
-                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Custom Link Undangan</label>
-                            <div class="flex items-center">
-                                <span class="hidden sm:inline bg-neutral-100 px-6 py-4 rounded-l-2xl border border-r-0 border-neutral-100 text-gray-400 text-[10px] font-black italic">WEDDING.ID/TO/</span>
-                                <input type="text" name="slug" value="{{ inv.slug if inv else '' }}" placeholder="nama-pasangan" required 
-                                       class="w-full px-6 py-4 rounded-2xl sm:rounded-l-none sm:rounded-r-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold]/10 outline-none transition-all font-bold text-neutral-700">
-                            </div>
+                    <div class="space-y-6 pt-10 border-t border-gray-100">
+                        <h3 class="text-xs font-bold gold-text uppercase tracking-[0.3em] flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-[--gold-soft] flex items-center justify-center mr-3 border border-[--gold]/20">04</span> Konfigurasi Link
+                        </h3>
+                        <div class="flex items-center group">
+                            <span class="hidden sm:inline bg-neutral-100 px-6 py-4 rounded-l-2xl border border-r-0 border-neutral-100 text-gray-400 text-[10px] font-black italic tracking-tighter transition-colors group-focus-within:border-[--gold] group-focus-within:bg-[--gold-soft] group-focus-within:text-[--gold]">WEDDING.ID/TO/</span>
+                            <input type="text" name="slug" value="{{ inv.slug if inv else '' }}" placeholder="romeo-juliet" required id="slug-input"
+                                   class="w-full px-6 py-4 rounded-2xl sm:rounded-l-none sm:rounded-r-2xl border border-neutral-100 bg-neutral-50 focus:bg-white focus:ring-4 focus:ring-[--gold-soft] focus:border-[--gold] outline-none transition-all font-bold text-neutral-700">
                         </div>
                     </div>
                     
-                    <button type="submit" class="w-full gradient-gold text-white font-bold py-6 rounded-2xl shadow-xl shadow-[--gold]/20 hover:brightness-110 active:scale-[0.98] transition-all tracking-[0.4em] text-[10px] uppercase">
+                    <button type="submit" class="w-full gradient-gold text-white font-bold py-6 rounded-2xl shadow-xl shadow-[--gold]/20 hover:brightness-110 active:scale-[0.98] transition-all tracking-[0.4em] text-[10px] uppercase mt-12">
                         Simpan Perubahan & Publish
                     </button>
                 </div>
             </div>
 
-            <div class="space-y-8">
-                <div class="sticky top-28 space-y-8">
-                    <div class="bg-neutral-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
-                        <div class="absolute -right-10 -top-10 w-32 h-32 bg-[--gold]/20 rounded-full blur-3xl transition-all"></div>
-                        <div class="flex items-center justify-between mb-8">
-                            <h3 class="text-[10px] font-bold uppercase tracking-widest text-[--gold]">Status: Live</h3>
-                            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+            <div class="space-y-8 lg:sticky lg:top-28 lg:h-max">
+                <div class="bg-neutral-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group" data-aos="fade-left">
+                    <div class="absolute -right-10 -top-10 w-32 h-32 bg-[--gold]/20 rounded-full blur-3xl transition-all group-hover:bg-[--gold]/30"></div>
+                    <div class="flex items-center justify-between mb-8 relative z-10">
+                        <h3 class="text-[10px] font-bold uppercase tracking-widest gold-text">Status: Live</h3>
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></div>
+                    </div>
+
+                    {% if inv %}
+                        <div class="bg-white/5 p-6 rounded-[2rem] border border-white/10 mb-8 relative z-10 backdrop-blur-sm hover:border-[--gold]/30 transition-colors">
+                            <p class="text-[9px] text-gray-500 uppercase mb-3 font-bold tracking-widest text-center">Preview Link</p>
+                            <a href="/to/{{ inv.slug }}" target="_blank" class="text-sm font-luxury gold-text block text-center truncate italic hover:underline">
+                                wedding.id/to/{{ inv.slug }}
+                            </a>
                         </div>
+                        <div class="grid grid-cols-2 gap-4 relative z-10">
+                            <button type="button" onclick="copyToClipboard('{{ inv.slug }}')" class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-[9px] font-bold tracking-widest transition-all uppercase">Salin Link</button>
+                            <a href="/to/{{ inv.slug }}" target="_blank" class="bg-[--gold] text-center py-4 rounded-2xl text-[9px] font-bold tracking-widest text-black transition-all uppercase hover:brightness-110">Buka</a>
+                        </div>
+                    {% else %}
+                        <p class="text-center text-xs text-neutral-500 py-10 italic relative z-10">Lengkapi data untuk mengaktifkan link.</p>
+                    {% endif %}
+                </div>
 
-                        {% if inv %}
-                            <div class="bg-white/5 p-6 rounded-[2rem] border border-white/10 mb-8">
-                                <p class="text-[9px] text-gray-500 uppercase mb-3 font-bold tracking-widest text-center">Preview Link</p>
-                                <a href="/to/{{ inv.slug }}" target="_blank" class="text-sm font-luxury text-[--gold] block text-center truncate italic">
-                                    wedding.id/to/{{ inv.slug }}
-                                </a>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button type="button" onclick="copyToClipboard('{{ inv.slug }}')" class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-[9px] font-bold tracking-widest transition-all uppercase">Salin</button>
-                                <a href="/to/{{ inv.slug }}" target="_blank" class="bg-[--gold] text-center py-4 rounded-2xl text-[9px] font-bold tracking-widest text-black transition-all uppercase">Buka</a>
-                            </div>
-                        {% else %}
-                            <p class="text-center text-xs text-neutral-500 py-10 italic">Lengkapi data untuk mengaktifkan link.</p>
-                        {% endif %}
-                    </div>
-
-                    <div class="bg-white p-8 rounded-[2.5rem] border border-neutral-100 shadow-sm">
-                        <h4 class="text-[10px] font-bold uppercase tracking-widest text-neutral-800 mb-6">Tips Lokasi</h4>
-                        <p class="text-[11px] text-neutral-500 leading-relaxed italic">Pastikan link Google Maps valid agar tamu tidak salah alamat. Gunakan fitur "Bagikan" -> "Salin Link" di Google Maps.</p>
-                    </div>
+                <div class="bg-white p-8 rounded-[2.5rem] border border-neutral-100 shadow-sm" data-aos="fade-left" data-aos-delay="200">
+                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-neutral-800 mb-6">Tips Foto Luxury</h4>
+                    <ul class="text-[11px] text-neutral-500 space-y-4 italic leading-relaxed">
+                        <li class="flex items-start"><span class="mr-3 gold-text">✧</span> Gunakan foto berkualitas tinggi (HD) agar tidak pecah.</li>
+                        <li class="flex items-start"><span class="mr-3 gold-text">✧</span> Foto Pria & Wanita sebaiknya memiliki tone warna senada.</li>
+                        <li class="flex items-start"><span class="mr-3 gold-text">✧</span> Foto Romantis Berdua disarankan format tegak (Portrait).</li>
+                    </ul>
                 </div>
             </div>
 
@@ -171,18 +240,49 @@
 
 {% block extra_js %}
 <script>
-    document.getElementById('hero_img_file').onchange = function (evt) {
-        const [file] = this.files;
-        if (file) {
-            document.getElementById('file-name').innerText = file.name;
-            document.getElementById('img-preview').src = URL.createObjectURL(file);
-        }
+    // Fungsi universal untuk preview gambar dan update styling dropzone
+    function setupImagePreview(inputId, previewId, dropzoneId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        const dropzone = document.getElementById(dropzoneId);
+
+        input.onchange = function (evt) {
+            const [file] = this.files;
+            if (file) {
+                // Update source gambar preview
+                preview.src = URL.createObjectURL(file);
+                // Tambahkan class 'has-image' untuk menyembunyikan icon dan memunculkan preview
+                dropzone.classList.add('has-image');
+                
+                // Update text di hero_img_file khusus (karena layout berbeda)
+                if (inputId === 'hero_img_file') {
+                    document.getElementById('file-name').innerText = file.name;
+                }
+            }
+        };
+    }
+
+    // Inisialisasi untuk ke-4 input foto
+    setupImagePreview('hero_img_file', 'prev-hero', 'drop-hero');
+    setupImagePreview('couple_img_file', 'prev-couple', 'drop-couple');
+    setupImagePreview('groom_img_file', 'prev-groom', 'drop-groom');
+    setupImagePreview('bride_img_file', 'prev-bride', 'drop-bride');
+
+    // Otomatis bersihkan input slug (kecil, tanpa spasi, tanpa simbol)
+    document.getElementById('slug-input').oninput = function() {
+        this.value = this.value.toLowerCase()
+                    .replace(/\s+/g, '-')           // Ganti spasi dengan -
+                    .replace(/[^\w\-]+/g, '');       // Hapus karakter aneh
     };
 
+    // Fungsi Salin Link
     function copyToClipboard(slug) {
         const fullUrl = window.location.origin + '/to/' + slug;
         navigator.clipboard.writeText(fullUrl).then(() => {
-            alert('Link berhasil disalin!');
+            // Kita gunakan alert minimalis (profesional)
+            alert('Link undangan berhasil disalin ke clipboard!');
+        }).catch(err => {
+            console.error('Gagal menyalin: ', err);
         });
     }
 </script>

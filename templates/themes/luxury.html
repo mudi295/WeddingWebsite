@@ -2,101 +2,362 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Wedding of {{ data.groom_name }} & {{ data.bride_name }}</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@100;300;400;600&family=Playfair+Display:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <style>
-        :root { --gold: #c5a059; --dark: #121212; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--dark); color: #fff; }
-        .font-luxury { font-family: 'Cormorant Garamond', serif; }
+        :root { 
+            --gold: #c5a059; 
+            --gold-dark: #8e6d31;
+            --bg-dark: #080808; 
+            --text-gray: #a0a0a0;
+        }
+
+        /* Reset & Base */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-dark); color: #ffffff; overflow: hidden; }
         
-        /* Background Image dengan Overlay Gelap */
-        .hero-bg {
-            /* Menggunakan data.hero_img dari database */
-            background: linear-gradient(to bottom, rgba(18,18,18,0.3), rgba(18,18,18,0.9)), 
-                        url('{{ data.hero_img if data.hero_img else "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200" }}');
-            background-size: cover;
-            background-position: center;
+        .font-luxury { font-family: 'Cormorant Garamond', serif; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+
+        /* Welcome Screen - Fullscreen Overlay */
+        #welcome-screen {
+            position: fixed; inset: 0; z-index: 10000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), 
+                        url('{{ data.hero_img if data.hero_img else "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200" }}');
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 1.2s cubic-bezier(0.7, 0, 0.3, 1);
         }
 
-        .gold-border { border: 1px solid rgba(197, 160, 89, 0.4); }
-        .gold-text { color: var(--gold); }
-        .bg-gold { background-color: var(--gold); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Gold Gradient Text */
+        .gold-gradient {
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .animate-fade { animation: fadeIn 1.5s ease-out forwards; }
+
+        /* Architectural Arch Frame */
+        .arch-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/5;
+            border-radius: 500px 500px 0 0;
+            overflow: hidden;
+            border: 1px solid var(--gold);
+            padding: 10px;
+        }
+        .arch-frame img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 500px 500px 0 0;
+            filter: sepia(30%) brightness(0.8);
+            transition: transform 1.5s ease;
+        }
+        .arch-frame:hover img { transform: scale(1.1); }
+
+        /* Professional Button */
+        .btn-luxury {
+            position: relative;
+            padding: 18px 40px;
+            border: 1px solid var(--gold);
+            background: transparent;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.4s;
+        }
+        .btn-luxury:hover { background: var(--gold); color: black; box-shadow: 0 10px 30px rgba(197, 160, 89, 0.2); }
+
+        /* Floating Audio Control */
+        #audio-toggle {
+            position: fixed; bottom: 30px; right: 30px; z-index: 999;
+            width: 45px; height: 45px; border-radius: 50%;
+            background: rgba(0,0,0,0.6); border: 1px solid var(--gold);
+            display: none; align-items: center; justify-content: center; cursor: pointer;
+        }
+
+        /* Divider Decoration */
+        .ornament-line {
+            height: 1px; width: 100px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        .pulse { animation: pulse-slow 3s infinite; }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="antialiased">
 
-    <section class="hero-bg min-h-screen flex items-center justify-center relative px-6">
-        <div class="max-w-3xl w-full text-center space-y-8 animate-fade">
-            <p class="uppercase tracking-[0.5em] text-[10px] gold-text font-bold">The Wedding Celebration of</p>
-            
-            <div class="py-10 border-y gold-border relative">
-                <div class="absolute -top-2 -left-2 text-xl gold-text">✧</div>
-                <div class="absolute -bottom-2 -right-2 text-xl gold-text">✧</div>
-                
-                <h1 class="font-luxury text-7xl md:text-9xl leading-none mb-4 italic">{{ data.groom_name }}</h1>
-                <p class="font-luxury text-4xl gold-text my-4">&</p>
-                <h1 class="font-luxury text-7xl md:text-9xl leading-none italic">{{ data.bride_name }}</h1>
+    <div id="welcome-screen">
+        <div class="text-center space-y-12 px-6" data-aos="zoom-in">
+            <div class="space-y-4">
+                <p class="uppercase tracking-[1.2em] text-[10px] text-white/50">The Wedding Celebration of</p>
+                <h1 class="font-luxury text-6xl md:text-8xl italic gold-gradient">{{ data.groom_name }} & {{ data.bride_name }}</h1>
+            </div>
+            <div class="pt-10">
+                <button onclick="unlockContent()" class="btn-luxury">Open Invitation</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="https://www.chosic.com/wp-content/uploads/2021/07/The-Engagement.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="audio-toggle" onclick="toggleAudio()" class="animate-spin-slow">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a059" stroke-width="1.5"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    </div>
+
+    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000">
+        
+        <main id="main-content" class="overflow-x-hidden">
+    
+    <section class="min-h-screen relative flex items-center justify-center py-20 px-6 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-fixed bg-center opacity-10 blur-sm scale-110" 
+         style="background-image: url('{{ data.hero_img if data.hero_img else 'https://images.unsplash.com/photo-1519225421980-715cb0215aed' }}'); transition: transform 0.5s ease-out;"></div>
+    
+    <div class="absolute top-20 left-[10%] opacity-20 hidden md:block animate-[bounce_5s_infinite]">
+        <p class="font-luxury text-9xl gold-gradient select-none">✧</p>
+    </div>
+
+    <div class="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
+        <div class="relative mb-12" data-aos="zoom-out-up" data-aos-duration="2500">
+            <div class="relative z-10 w-[280px] md:w-[400px] aspect-[3/4] rounded-t-full border-[1px] border-[--gold] p-3 backdrop-blur-sm">
+                <div class="w-full h-full rounded-t-full overflow-hidden shadow-[0_0_50px_rgba(197,160,89,0.2)]">
+                    <img src="{{ data.couple_img if data.couple_img else 'https://images.unsplash.com/photo-1583939003579-730e3918a45a' }}" 
+                         alt="Romantic Couple" 
+                         class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-[4s] ease-in-out">
+                </div>
+            </div>
+            <div class="absolute -bottom-6 -right-6 w-full h-full border-[1px] border-[--gold]/20 rounded-t-full -z-10 translate-x-4 translate-y-4 animate-[pulse_4s_infinite]"></div>
+        </div>
+
+        <div class="text-center space-y-6 relative">
+            <div class="flex items-center justify-center space-x-4 opacity-50" data-aos="fade-up" data-aos-delay="300">
+                <div class="h-[1px] w-12 bg-[--gold]"></div>
+                <p class="uppercase tracking-[0.5em] text-[9px] md:text-[11px] text-[--gold] font-bold">The Wedding of</p>
+                <div class="h-[1px] w-12 bg-[--gold]"></div>
             </div>
 
-            <div class="space-y-4 pt-6">
-                <p class="uppercase tracking-[0.3em] text-xs font-light">Save the Date</p>
-                <p class="font-luxury text-3xl italic gold-text">
+            <h2 class="font-luxury text-6xl md:text-9xl italic leading-none gold-gradient drop-shadow-2xl" 
+                data-aos="zoom-in" data-aos-delay="600" data-aos-duration="2000">
+                {{ data.groom_name }} <span class="font-playfair text-3xl md:text-6xl mx-2 block md:inline-block">&</span> {{ data.bride_name }}
+            </h2>
+
+            <div class="inline-block border-y border-[--gold]/30 py-4 px-12 mt-6" data-aos="fade-up" data-aos-delay="900">
+                <p class="uppercase tracking-[0.6em] text-[10px] md:text-[12px] font-light text-white/80">
                     {{ data.wedding_date if data.wedding_date else '20 . 12 . 2026' }}
                 </p>
-                <p class="text-[10px] tracking-widest text-gray-400 uppercase">PUKUL {{ data.wedding_time if data.wedding_time else '09:00' }} WIB</p>
             </div>
         </div>
 
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-center opacity-50">
-            <p class="text-[8px] uppercase tracking-[0.3em] mb-2">Scroll Down</p>
-            <div class="w-[1px] h-12 bg-white mx-auto"></div>
+        <div class="mt-20 opacity-30 animate-bounce">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
+            </svg>
+        </div>
+    </div>
+</section>
+
+    <section class="py-32 px-6 max-w-7xl mx-auto overflow-hidden">
+    <div class="grid md:grid-cols-2 gap-16 md:gap-32 items-center">
+        
+        <div class="space-y-12 text-center md:text-right" data-aos="fade-right" data-aos-duration="1500">
+            <div class="relative group inline-block">
+                <div class="arch-frame mx-auto md:ml-auto md:mr-0 max-w-[320px] overflow-hidden rounded-t-full border border-[--gold]/30 p-2">
+                    <img src="{{ data.groom_img if data.groom_img else url_for('static', filename='images/default-groom.jpg') }}" 
+                         class="rounded-t-full grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" 
+                         alt="Groom">
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="font-luxury text-5xl gold-gradient italic">{{ data.groom_name }}</h3>
+                <p class="text-[10px] tracking-widest text-gray-500 leading-loose uppercase">
+                    Putra dari <br>
+                    <span class="text-white font-medium">{{ data.groom_parents if data.groom_parents else 'Nama Orang Tua Pria' }}</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="space-y-12 text-center md:text-left" data-aos="fade-left" data-aos-duration="1500">
+            <div class="relative group inline-block">
+                <div class="arch-frame mx-auto md:mr-auto md:ml-0 max-w-[320px] overflow-hidden rounded-t-full border border-[--gold]/30 p-2">
+                    <img src="{{ data.bride_img if data.bride_img else url_for('static', filename='images/default-bride.jpg') }}" 
+                         class="rounded-t-full grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" 
+                         alt="Bride">
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="font-luxury text-5xl gold-gradient italic">{{ data.bride_name }}</h3>
+                <p class="text-[10px] tracking-widest text-gray-500 leading-loose uppercase">
+                    Putri dari <br>
+                    <span class="text-white font-medium">{{ data.bride_parents if data.bride_parents else 'Nama Orang Tua Wanita' }}</span>
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+    <section class="py-24 bg-[#0a0a0a] border-y border-white/5 relative">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <p class="text-[10px] tracking-[0.8em] uppercase text-[--gold] mb-16 opacity-70">The Countdown</p>
+            <div id="timer" class="flex justify-around items-center max-w-3xl mx-auto bg-white/5 backdrop-blur-md py-12 rounded-3xl border border-white/10 shadow-2xl">
+                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="100">
+                    <span id="d" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
+                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Days</span>
+                </div>
+                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="200">
+                    <span id="h" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
+                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Hours</span>
+                </div>
+                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="300">
+                    <span id="m" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
+                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Mins</span>
+                </div>
+                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="400">
+                    <span id="s" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
+                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Secs</span>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="py-32 px-6 bg-[#181818] text-center">
-        <div class="max-w-xl mx-auto gold-border p-12 rounded-[50px]">
-            <h2 class="font-luxury text-4xl mb-10 gold-text italic">Wedding Event</h2>
-            
-            <div class="space-y-12">
-                <div>
-                    <h3 class="uppercase tracking-widest text-sm font-bold mb-2">Waktu & Tempat</h3>
-                    <p class="text-xs text-gray-400 font-light leading-relaxed mb-4">
-                        Pukul {{ data.wedding_time if data.wedding_time else '09:00' }} - Selesai
-                    </p>
-                    
-                    <p class="text-sm gold-text font-luxury italic text-xl">
-                        {{ data.location_name if data.location_name else 'Lokasi Belum Diatur' }}
-                    </p>
+    <section class="py-32 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-20" data-aos="fade-down">
+                <h2 class="font-luxury text-5xl italic gold-gradient">The Celebration</h2>
+            </div>
+
+            <div class="grid gap-12">
+                <div class="group relative bg-[#111] p-10 overflow-hidden border border-white/5 hover:border-[--gold]/50 transition-all duration-500 rounded-2xl" 
+                     data-aos="fade-up">
+                    <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l-5.5 9h11z"/></svg>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center relative z-10">
+                        <div class="md:w-1/3 text-center md:text-left mb-6 md:mb-0">
+                            <h4 class="font-luxury text-4xl italic text-[--gold]">The Ceremony</h4>
+                            <p class="text-[10px] tracking-widest text-gray-500 uppercase mt-2 italic">Akad Nikah</p>
+                        </div>
+                        <div class="md:w-2/3 md:pl-12 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0">
+                            <div class="space-y-4 text-center md:text-left">
+                                <p class="text-gray-300 tracking-widest uppercase text-xs">Pukul 09:00 — 10:30 WIB</p>
+                                <p class="text-lg text-white font-light tracking-wide">{{ data.location_name }}</p>
+                                <p class="text-gray-500 text-xs italic">Central Hall, Jakarta Selatan</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="h-[1px] w-12 bg-gray-800 mx-auto"></div>
-
-                <div class="px-4 text-[11px] text-gray-500 italic leading-relaxed">
-                    "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kedua mempelai."
+                <div class="group relative bg-[#111] p-10 overflow-hidden border border-white/5 hover:border-[--gold]/50 transition-all duration-500 rounded-2xl" 
+                     data-aos="fade-up" data-aos-delay="200">
+                    <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22l5.5-9h-11z"/></svg>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-center relative z-10">
+                        <div class="md:w-1/3 text-center md:text-left mb-6 md:mb-0">
+                            <h4 class="font-luxury text-4xl italic text-[--gold]">The Reception</h4>
+                            <p class="text-[10px] tracking-widest text-gray-500 uppercase mt-2 italic">Resepsi</p>
+                        </div>
+                        <div class="md:w-2/3 md:pl-12 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0">
+                            <div class="space-y-4 text-center md:text-left">
+                                <p class="text-gray-300 tracking-widest uppercase text-xs">Pukul 11:00 — 14:00 WIB</p>
+                                <p class="text-lg text-white font-light tracking-wide">{{ data.location_name }}</p>
+                                <p class="text-gray-500 text-xs italic">Grand Ballroom</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {% if data.maps_url %}
-            <a href="{{ data.maps_url }}" target="_blank" class="inline-block mt-16 px-8 py-4 bg-gold text-black text-[10px] font-bold tracking-[0.2em] rounded-full uppercase hover:bg-white transition-all shadow-lg shadow-[--gold]/20">
-                Buka Google Maps
-            </a>
-            {% else %}
-            <p class="mt-10 text-[9px] text-gray-600 italic tracking-widest uppercase">Link lokasi belum tersedia</p>
-            {% endif %}
+            <div class="mt-20 text-center" data-aos="zoom-in">
+                <a href="{{ data.maps_url }}" target="_blank" 
+                   class="inline-block border border-[--gold] px-12 py-4 text-[10px] uppercase tracking-[0.5em] text-[--gold] hover:bg-[--gold] hover:text-black transition-all duration-500">
+                   Navigate to Venue
+                </a>
+            </div>
         </div>
     </section>
 
-    <footer class="py-20 text-center opacity-30">
-        <p class="text-[10px] tracking-[0.5em] uppercase italic">Created by Wedding.id</p>
+    <section class="py-40 bg-[#050505] text-center px-6">
+        <div class="max-w-2xl mx-auto space-y-8" data-aos="fade-up">
+            <p class="font-luxury text-2xl md:text-4xl italic text-gray-300 leading-relaxed italic drop-shadow-lg">
+                "Two souls with but a single thought; two hearts that beat as one."
+            </p>
+            <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-[--gold] to-transparent mx-auto opacity-50"></div>
+            <p class="text-[10px] tracking-[0.5em] text-[--gold] uppercase font-bold">— Friedrich Halm</p>
+        </div>
+    </section>
+
+    <footer class="py-32 text-center border-t border-white/5 bg-[#080808]">
+        <div data-aos="zoom-out">
+            <h1 class="font-luxury text-4xl italic gold-gradient mb-6">{{ data.groom_name }} & {{ data.bride_name }}</h1>
+            <p class="text-[9px] tracking-[1em] uppercase text-gray-600 mb-8 italic">Wedding Invitation</p>
+            <div class="h-10 w-[1px] bg-[--gold]/30 mx-auto"></div>
+        </div>
     </footer>
+</main>
+    </main>
 
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1500, once: true });
+
+        function unlockContent() {
+            const welcome = document.getElementById('welcome-screen');
+            const main = document.getElementById('main-content');
+            const audioBtn = document.getElementById('audio-toggle');
+            const music = document.getElementById('bg-music');
+
+            welcome.style.transform = 'translateY(-100%)';
+            welcome.style.opacity = '0';
+            
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                main.classList.remove('hidden');
+                setTimeout(() => main.style.opacity = '1', 100);
+                audioBtn.style.display = 'flex';
+                document.body.style.overflow = 'auto';
+                music.play();
+            }, 1000);
+        }
+
+        function toggleAudio() {
+            const music = document.getElementById('bg-music');
+            const btn = document.getElementById('audio-toggle');
+            if (music.paused) {
+                music.play();
+                btn.style.opacity = '1';
+            } else {
+                music.pause();
+                btn.style.opacity = '0.5';
+            }
+        }
+
+        // Countdown Script
+        const targetDate = new Date("{{ data.wedding_date }}T{{ data.wedding_time if data.wedding_time else '09:00' }}").getTime();
+
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff > 0) {
+                document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+                document.getElementById('h').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                document.getElementById('m').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById('s').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
