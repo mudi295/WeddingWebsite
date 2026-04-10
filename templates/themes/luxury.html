@@ -6,251 +6,292 @@
     <title>The Wedding of {{ data.groom_name }} & {{ data.bride_name }}</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@100;300;400;600&family=Playfair+Display:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@100;300;400;600&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <style>
-        :root { 
-            --gold: #c5a059; 
-            --gold-dark: #8e6d31;
-            --bg-dark: #080808; 
-            --text-gray: #a0a0a0;
+        :root { --gold: #c5a059; --bg-dark: #080808; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: #ffffff; 
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Dikunci awal */
+            height: 100vh;
+            width: 100%;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; width: 100%; }
-        
         .font-luxury { font-family: 'Cormorant Garamond', serif; }
-        .font-playfair { font-family: 'Playfair Display', serif; }
 
         /* Welcome Screen */
         #welcome-screen {
-            position: fixed; inset: 0; z-index: 10000;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), 
-                        url('{{ data.hero_img if data.hero_img else "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200" }}');
-            background-size: cover; background-position: center;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 1.2s cubic-bezier(0.7, 0, 0.3, 1);
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 1.8s cubic-bezier(0.85, 0, 0.15, 1), visibility 1.8s;
+            will-change: transform;
         }
 
-        .gold-gradient {
+        /* Class untuk menghilangkan cover sepenuhnya */
+        #welcome-screen.unlocked {
+            transform: translateY(-100%);
+            visibility: hidden;
+        }
+
+        .welcome-bg {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8)), 
+                        url('{{ data.hero_img if data.hero_img else "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200" }}');
+            background-size: cover; background-position: center;
+            animation: kenBurns 20s infinite alternate;
+        }
+
+        @keyframes kenBurns {
+            from { transform: scale(1.1); }
+            to { transform: scale(1.25); }
+        }
+
+        .gold-reveal {
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .btn-luxury {
+            padding: 16px 40px;
+            border: 1px solid var(--gold);
+            background: rgba(197, 160, 89, 0.05);
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: 0.5s all;
+            backdrop-filter: blur(10px);
+        }
+        .btn-luxury:hover { background: var(--gold); color: black; box-shadow: 0 0 30px rgba(197, 160, 89, 0.4); }
+
+        /* Main Content Transition */
+        #main-content {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.5s ease 0.5s, transform 1.5s cubic-bezier(0.2, 1, 0.3, 1) 0.5s;
+        }
+        #main-content.reveal {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .arch-frame {
-            position: relative; width: 100%; aspect-ratio: 4/5;
-            border-radius: 500px 500px 0 0; overflow: hidden;
-            border: 1px solid var(--gold); padding: 8px;
-        }
-        .arch-frame img {
-            width: 100%; height: 100%; object-fit: cover;
-            border-radius: 500px 500px 0 0; filter: sepia(20%) brightness(0.8);
+            border-radius: 500px 500px 0 0;
+            overflow: hidden;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            padding: 6px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
         }
 
-        .btn-luxury {
-            padding: 16px 32px; border: 1px solid var(--gold);
-            background: transparent; color: var(--gold);
-            text-transform: uppercase; letter-spacing: 4px;
-            font-size: 10px; cursor: pointer; transition: all 0.4s;
-        }
-        .btn-luxury:hover { background: var(--gold); color: black; }
+        .floating { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        #audio-toggle {
-            position: fixed; bottom: 20px; right: 20px; z-index: 999;
-            width: 40px; height: 40px; border-radius: 50%;
-            background: rgba(0,0,0,0.6); border: 1px solid var(--gold);
-            display: none; align-items: center; justify-content: center; cursor: pointer;
-        }
+        .bar { width: 3px; background: var(--gold); margin: 0 1px; animation: equalize 1s infinite; }
+        @keyframes equalize { 0%, 100% { height: 4px; } 50% { height: 20px; } }
 
-        /* Fix for large text on mobile */
-        @media (max-width: 640px) {
-            .mobile-text-responsive { font-size: 3.5rem !important; line-height: 1.1; }
-            .countdown-text { font-size: 2.5rem !important; }
-        }
+        .text-adaptive-title { font-size: clamp(2.8rem, 9vw, 6.5rem); line-height: 1.1; }
     </style>
 </head>
-<body class="antialiased overflow-hidden">
+<body class="antialiased">
 
     <div id="welcome-screen">
-        <div class="text-center space-y-8 px-6" data-aos="zoom-in">
-            <div class="space-y-4">
-                <p class="uppercase tracking-[0.8em] text-[9px] text-white/50">The Wedding Celebration of</p>
-                <h1 class="font-luxury text-5xl md:text-8xl italic gold-gradient mobile-text-responsive">
-                    {{ data.groom_name }} & {{ data.bride_name }}
-                </h1>
+        <div class="welcome-bg"></div>
+        <div class="relative text-center space-y-10 px-6 z-10 w-full">
+            <div data-aos="fade-down" data-aos-duration="2000">
+                <p class="uppercase tracking-[1em] text-[9px] text-white/70 mb-4">Wedding Invitation</p>
+                <div class="h-[1px] w-20 bg-[--gold] mx-auto opacity-40"></div>
             </div>
-            <button onclick="unlockContent()" class="btn-luxury">Open Invitation</button>
+            <h1 class="font-luxury text-adaptive-title italic gold-reveal py-2">
+                {{ data.groom_name }} & {{ data.bride_name }}
+            </h1>
+            <div data-aos="fade-up" data-aos-duration="2000" data-aos-delay="500">
+                <button onclick="unlockContent()" class="btn-luxury">Open Invitation</button>
+            </div>
         </div>
     </div>
 
     <audio id="bg-music" loop>
         <source src="https://www.chosic.com/wp-content/uploads/2021/07/The-Engagement.mp3" type="audio/mpeg">
     </audio>
-    <div id="audio-toggle" onclick="toggleAudio()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c5a059" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    <div id="audio-visualizer" class="fixed bottom-6 right-6 z-[999] flex items-end cursor-pointer h-10 hidden" onclick="toggleAudio()">
+        <div class="bar" style="animation-delay: -0.2s"></div>
+        <div class="bar" style="animation-delay: -0.4s"></div>
+        <div class="bar" style="animation-delay: -0.6s"></div>
+        <div class="bar" style="animation-delay: -0.1s"></div>
     </div>
 
-    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000 overflow-x-hidden">
-        
-        <section class="min-h-screen relative flex items-center justify-center py-12 md:py-20 px-4 overflow-hidden">
-            <div class="absolute inset-0 bg-cover bg-fixed bg-center opacity-10 blur-sm scale-110" 
-                 style="background-image: url('{{ data.hero_img if data.hero_img else 'https://images.unsplash.com/photo-1519225421980-715cb0215aed' }}');"></div>
+    <main id="main-content" class="hidden">
+        <section class="min-h-screen relative flex items-center justify-center pt-24 pb-12 px-6 overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center opacity-10 blur-sm scale-110" 
+                 style="background-image: url('{{ data.hero_img }}');"></div>
             
-            <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-                <div class="relative mb-10" data-aos="fade-up">
-                    <div class="w-[240px] md:w-[350px] aspect-[3/4] rounded-t-full border border-[--gold] p-2">
-                        <div class="w-full h-full rounded-t-full overflow-hidden shadow-2xl">
-                            <img src="{{ data.couple_img if data.couple_img else 'https://images.unsplash.com/photo-1583939003579-730e3918a45a' }}" class="w-full h-full object-cover">
-                        </div>
+            <div class="relative z-10 text-center w-full max-w-4xl">
+                <div class="floating mb-12" data-aos="zoom-in" data-aos-duration="2000">
+                    <div class="arch-frame w-[240px] md:w-[350px] aspect-[3/4] mx-auto">
+                        <img src="{{ data.couple_img if data.couple_img else 'https://plus.unsplash.com/premium_photo-1664530452596-e1c17e342876?q=80&w=686&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}" class="w-full h-full object-cover rounded-t-full">
                     </div>
                 </div>
 
-                <div class="text-center space-y-4">
-                    <p class="uppercase tracking-[0.4em] text-[9px] text-[--gold] font-bold">The Wedding of</p>
-                    <h2 class="font-luxury text-5xl md:text-8xl italic gold-gradient mobile-text-responsive px-4">
-                        {{ data.groom_name }} <span class="font-playfair text-2xl md:text-5xl block md:inline">&</span> {{ data.bride_name }}
+                <div data-aos="fade-up">
+                    <p class="uppercase tracking-[0.6em] text-[10px] text-[--gold] mb-4">The Wedding of</p>
+                    <h2 class="font-luxury text-adaptive-title italic gold-reveal mb-8 px-2">
+                        {{ data.groom_name }} & {{ data.bride_name }}
                     </h2>
-                    <div class="border-y border-[--gold]/30 py-3 px-8 mt-4 inline-block">
-                        <p class="uppercase tracking-[0.4em] text-[10px] md:text-sm font-light">
-                            {{ data.wedding_date if data.wedding_date else '20 . 12 . 2026' }}
-                        </p>
+                    <div class="inline-block border-t border-b border-white/10 py-4 px-8">
+                        <p class="text-xs md:text-sm tracking-[0.5em] uppercase opacity-80">{{ data.wedding_date }}</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="py-20 px-6 max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                <div class="text-center md:text-right" data-aos="fade-right">
-                    <div class="arch-frame max-w-[280px] mx-auto md:ml-auto md:mr-0 mb-8 shadow-2xl">
-                        <img src="{{ data.groom_img if data.groom_img else 'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=800' }}">
+        <section class="py-24 px-6 max-w-6xl mx-auto text-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <div data-aos="fade-right">
+                    <div class="arch-frame w-[190px] md:w-[250px] aspect-[4/5] mx-auto mb-8">
+                        <img src="{{ data.groom_img if data.groom_img else 'https://images.unsplash.com/photo-1618886614638-80e3c103d31a?q=80&w=670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}" class="w-full h-full object-cover rounded-t-full grayscale hover:grayscale-0 transition-all duration-1000">
                     </div>
-                    <h3 class="font-luxury text-4xl gold-gradient italic mb-2">{{ data.groom_name }}</h3>
-                    <p class="text-[9px] tracking-widest text-gray-500 uppercase mb-1">Putra dari</p>
-                    <p class="text-xs text-white/80 uppercase tracking-widest">{{ data.groom_parents }}</p>
+                    <h3 class="font-luxury text-4xl gold-reveal italic">{{ data.groom_name }}</h3>
+                    <p class="text-[9px] uppercase tracking-widest text-gray-500 mt-4 mb-2">Putra dari</p>
+                    <p class="text-xs uppercase text-white/80">{{ data.groom_parents }}</p>
                 </div>
-                <div class="text-center md:text-left" data-aos="fade-left">
-                    <div class="arch-frame max-w-[280px] mx-auto md:mr-auto md:ml-0 mb-8 shadow-2xl">
-                        <img src="{{ data.bride_img if data.bride_img else 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800' }}">
+                <div data-aos="fade-left">
+                    <div class="arch-frame w-[190px] md:w-[250px] aspect-[4/5] mx-auto mb-8">
+                        <img src="{{ data.bride_img if data.bride_img else 'https://images.unsplash.com/photo-1741604047875-4bcbea287329?q=80&w=699&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}" class="w-full h-full object-cover rounded-t-full grayscale hover:grayscale-0 transition-all duration-1000">
                     </div>
-                    <h3 class="font-luxury text-4xl gold-gradient italic mb-2">{{ data.bride_name }}</h3>
-                    <p class="text-[9px] tracking-widest text-gray-500 uppercase mb-1">Putri dari</p>
-                    <p class="text-xs text-white/80 uppercase tracking-widest">{{ data.bride_parents }}</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="py-20 px-4">
-            <div class="max-w-3xl mx-auto bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 md:p-12">
-                <p class="text-center text-[9px] tracking-[0.5em] text-[--gold] mb-10 uppercase">Save The Date</p>
-                <div id="timer" class="flex justify-between items-center text-center">
-                    <div class="flex-1 border-r border-white/10 last:border-0">
-                        <span id="d" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
-                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Days</span>
-                    </div>
-                    <div class="flex-1 border-r border-white/10 last:border-0">
-                        <span id="h" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
-                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Hours</span>
-                    </div>
-                    <div class="flex-1 border-r border-white/10 last:border-0">
-                        <span id="m" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
-                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Mins</span>
-                    </div>
-                    <div class="flex-1">
-                        <span id="s" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
-                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Secs</span>
-                    </div>
+                    <h3 class="font-luxury text-4xl gold-reveal italic">{{ data.bride_name }}</h3>
+                    <p class="text-[9px] uppercase tracking-widest text-gray-500 mt-4 mb-2">Putri dari</p>
+                    <p class="text-xs uppercase text-white/80">{{ data.bride_parents }}</p>
                 </div>
             </div>
         </section>
 
-        <section class="py-20 px-6 max-w-4xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="font-luxury text-4xl md:text-6xl italic gold-gradient">The Events</h2>
-            </div>
-            <div class="space-y-6">
-                <div class="bg-[#111] p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 md:items-center" data-aos="fade-up">
-                    <div class="md:w-1/3 text-center md:text-left">
-                        <h4 class="font-luxury text-3xl text-[--gold] italic">Akad Nikah</h4>
-                        <p class="text-[9px] text-gray-500 tracking-[0.3em] uppercase mt-1">The Ceremony</p>
-                    </div>
-                    <div class="md:flex-1 md:pl-8 md:border-l border-white/10">
-                        <p class="text-xs uppercase tracking-widest text-white mb-2">09:00 — 10:30 WIB</p>
-                        <p class="text-sm text-gray-400 leading-relaxed font-light">{{ data.location_name }}</p>
-                    </div>
-                </div>
-                <div class="bg-[#111] p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 md:items-center" data-aos="fade-up" data-aos-delay="200">
-                    <div class="md:w-1/3 text-center md:text-left">
-                        <h4 class="font-luxury text-3xl text-[--gold] italic">Resepsi</h4>
-                        <p class="text-[9px] text-gray-500 tracking-[0.3em] uppercase mt-1">The Reception</p>
-                    </div>
-                    <div class="md:flex-1 md:pl-8 md:border-l border-white/10">
-                        <p class="text-xs uppercase tracking-widest text-white mb-2">11:00 — 14:00 WIB</p>
-                        <p class="text-sm text-gray-400 leading-relaxed font-light">{{ data.location_name }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-12 text-center">
-                <a href="{{ data.maps_url }}" target="_blank" class="btn-luxury inline-block w-full md:w-auto">View Venue Maps</a>
-            </div>
-        </section>
-
-        <section class="py-24 px-6 text-center">
-            <div class="max-w-2xl mx-auto space-y-6" data-aos="zoom-in">
-                <p class="font-luxury text-xl md:text-3xl italic text-gray-300 leading-relaxed">
-                    "Two souls with but a single thought; two hearts that beat as one."
+        <section class="py-20 px-4 text-center">
+    <div class="max-w-xl mx-auto backdrop-blur-3xl bg-white/[0.03] p-10 md:p-16 rounded-[50px] border border-white/10 shadow-2xl" data-aos="zoom-in">
+        <h4 class="font-luxury text-4xl gold-reveal italic mb-10">Save The Date</h4>
+        
+        <div class="space-y-8">
+            <div class="space-y-2">
+                <p class="text-[10px] uppercase tracking-[0.4em] text-gray-500">Waktu Acara</p>
+                <p class="text-lg tracking-[0.2em] font-light">
+                    {{ data.wedding_time if data.wedding_time else '11:00 AM — 14:00 PM' }}
                 </p>
-                <p class="text-[9px] tracking-[0.4em] text-[--gold] uppercase font-bold">— Friedrich Halm</p>
             </div>
-        </section>
 
-        <footer class="py-20 text-center border-t border-white/5">
-            <h1 class="font-luxury text-3xl md:text-5xl italic gold-gradient mb-4">{{ data.groom_name }} & {{ data.bride_name }}</h1>
-            <p class="text-[8px] tracking-[1em] uppercase text-gray-600">Wedding Invitation 2026</p>
+            <div class="space-y-3">
+                <p class="text-[10px] uppercase tracking-[0.4em] text-gray-500">Lokasi Acara</p>
+                <div class="px-2">
+                    <p class="font-luxury text-3xl leading-tight mb-2">
+                        {{ data.location_name if data.location_name else 'The Grand Ritz-Carlton Ballroom' }}
+                    </p>
+                </div>
+                
+                <div class="pt-4">
+                    <a href="{{ data.maps_url if data.maps_url else '#' }}" target="_blank" class="btn-luxury inline-block text-[9px]">
+                        Buka Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-6 mt-12 pt-10 border-t border-white/5">
+            <div class="text-center">
+                <span id="d" class="text-3xl font-luxury gold-reveal">00</span>
+                <p class="text-[8px] uppercase mt-1 opacity-40 tracking-widest">Days</p>
+            </div>
+            <div class="text-center">
+                <span id="h" class="text-3xl font-luxury gold-reveal">00</span>
+                <p class="text-[8px] uppercase mt-1 opacity-40 tracking-widest">Hours</p>
+            </div>
+            <div class="text-center">
+                <span id="m" class="text-3xl font-luxury gold-reveal">00</span>
+                <p class="text-[8px] uppercase mt-1 opacity-40 tracking-widest">Mins</p>
+            </div>
+            <div class="text-center">
+                <span id="s" class="text-3xl font-luxury gold-reveal">00</span>
+                <p class="text-[8px] uppercase mt-1 opacity-40 tracking-widest">Secs</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <footer class="py-24 text-center opacity-30">
+            <h1 class="font-luxury text-2xl italic mb-2">{{ data.groom_name }} & {{ data.bride_name }}</h1>
+            <p class="text-[8px] tracking-[1em]">WEDDING INVITATION 2026</p>
         </footer>
     </main>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1200, once: true });
+        AOS.init({ duration: 1500, once: true });
 
         function unlockContent() {
             const welcome = document.getElementById('welcome-screen');
             const main = document.getElementById('main-content');
-            const audioBtn = document.getElementById('audio-toggle');
             const music = document.getElementById('bg-music');
+            const visualizer = document.getElementById('audio-visualizer');
 
-            welcome.style.transform = 'translateY(-100%)';
-            welcome.style.opacity = '0';
+            // 1. Tambahkan class unlocked (trigger CSS transition translateY)
+            welcome.classList.add('unlocked');
             
+            // 2. Munculkan main content dari display:none
+            main.classList.remove('hidden');
+            
+            // 3. Beri sedikit jeda agar browser sempat merender layout sebelum AOS & Animasi muncul
+            setTimeout(() => {
+                main.classList.add('reveal');
+                document.body.style.overflowY = 'auto';
+                document.body.style.height = 'auto';
+                music.play().catch(e => console.log("Audio play deferred"));
+                visualizer.classList.remove('hidden');
+                AOS.refresh();
+            }, 100);
+
+            // 4. HAPUS elemen cover dari DOM setelah animasi selesai agar tidak mengganggu interaksi/visual
             setTimeout(() => {
                 welcome.style.display = 'none';
-                main.classList.remove('hidden');
-                setTimeout(() => main.style.opacity = '1', 100);
-                audioBtn.style.display = 'flex';
-                document.body.style.overflow = 'auto';
-                music.play();
-                AOS.refresh();
-            }, 1000);
+            }, 1800);
         }
 
         function toggleAudio() {
             const music = document.getElementById('bg-music');
-            music.paused ? music.play() : music.pause();
+            const bars = document.querySelectorAll('.bar');
+            if (music.paused) {
+                music.play();
+                bars.forEach(b => b.style.animationPlayState = 'running');
+            } else {
+                music.pause();
+                bars.forEach(b => b.style.animationPlayState = 'paused');
+            }
         }
 
-        // Countdown
-        const targetDate = new Date("{{ data.wedding_date }}T{{ data.wedding_time if data.wedding_time else '09:00' }}").getTime();
-        setInterval(() => {
-            const diff = targetDate - new Date().getTime();
+        const targetDate = new Date("{{ data.wedding_date }}").getTime();
+        function updateTimer() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
             if (diff > 0) {
-                document.getElementById('d').innerText = Math.floor(diff / (86400000));
-                document.getElementById('h').innerText = Math.floor((diff % 86400000) / 3600000);
-                document.getElementById('m').innerText = Math.floor((diff % 3600000) / 60000);
-                document.getElementById('s').innerText = Math.floor((diff % 60000) / 1000);
+                document.getElementById('d').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+                document.getElementById('h').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+                document.getElementById('m').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                document.getElementById('s').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
             }
-        }, 1000);
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
     </script>
 </body>
 </html>
