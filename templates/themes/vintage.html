@@ -1,21 +1,244 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Wedding Gazette | {{ data.groom_name }} & {{ data.bride_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@0,700;1,700&family=Inter:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f4f7f4; color: #2d4a2d; }
-        .font-serif { font-family: 'Playfair Display', serif; }
+        :root {
+            --paper-dark: #d4ccb0;
+            --paper-light: #e8e2d2;
+            --ink: #2b2b2b;
+            --accent: #bc4749; 
+        }
+        
+        body { 
+            font-family: 'IM Fell English', serif; 
+            background-color: var(--paper-dark);
+            color: var(--ink);
+            overflow: hidden; /* Dikunci sebelum klik buka */
+            line-height: 1.6;
+        }
+
+        /* WELCOME SCREEN */
+        #welcome-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--paper-dark);
+            background-image: url('https://www.transparenttextures.com/patterns/pinstriped-dark.png');
+            transition: all 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        #welcome-screen.unlocked {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        .envelope {
+            background-color: var(--paper-light);
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            padding: 3rem 2rem;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Tekstur Kertas Tua */
+        .aged-paper {
+            background-color: var(--paper-light);
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            box-shadow: 0 0 50px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .font-typewriter { font-family: 'Special Elite', cursive; }
+        .font-serif-bold { font-family: 'Playfair Display', serif; }
+
+        /* Efek Foto Film Klasik */
+        .vintage-frame {
+            padding: 12px 12px 40px 12px;
+            background: white;
+            box-shadow: 3px 3px 15px rgba(0,0,0,0.2);
+            border: 1px solid #ddd;
+            transform: rotate(-1deg);
+            transition: all 0.5s ease;
+        }
+
+        .sepia-img {
+            filter: sepia(0.6) contrast(1.1) brightness(0.9);
+            mix-blend-mode: multiply;
+        }
+
+        .header-line {
+            border-top: 4px solid var(--ink);
+            border-bottom: 1px solid var(--ink);
+            height: 8px;
+        }
+
+        .stamp-effect {
+            border: 4px double var(--accent);
+            color: var(--accent);
+            font-family: 'Special Elite', cursive;
+            padding: 4px 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+            opacity: 0.8;
+            transform: rotate(-15deg);
+            display: inline-block;
+        }
+
+        .btn-read {
+            background: var(--ink);
+            color: var(--paper-light);
+            padding: 10px 25px;
+            font-family: 'Special Elite', cursive;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-read:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
     </style>
 </head>
-<body class="bg-[#f2e8cf] text-[#386641] flex items-center justify-center min-h-screen font-mono p-10">
-    <div class="border-2 border-dashed border-[#bc4749] p-10 text-center max-w-sm bg-[url('https://www.transparenttextures.com/patterns/old-mathematics.png')]">
-        <p class="mb-6 uppercase border-b border-[#bc4749] inline-block">Official Announcement</p>
-        <h1 class="text-4xl font-black mb-2">{{ data.groom_name }}</h1>
-        <p class="text-xl">JOINING WITH</p>
-        <h1 class="text-4xl font-black mt-2">{{ data.bride_name }}</h1>
-        <p class="mt-10 text-xs italic">"Two souls, one heart."</p>
+<body class="p-4 md:p-8 antialiased">
+
+    <div id="welcome-screen">
+        <div class="envelope" data-aos="zoom-in">
+            <div class="stamp-effect mb-6">Extra Edition</div>
+            <p class="font-typewriter text-[10px] uppercase tracking-widest mb-2">To Our Guests</p>
+            <h2 class="font-serif-bold text-3xl mb-6 leading-tight">THE WEDDING GAZETTE</h2>
+            <div class="w-16 h-[1px] bg-black/20 mx-auto mb-6"></div>
+            <p class="font-serif italic text-lg mb-8 text-gray-700">A Story of Two Hearts</p>
+            <button onclick="unlockInvitation()" class="btn-read">Read Full Story</button>
+        </div>
     </div>
+
+    <header class="max-w-5xl mx-auto text-center mb-12" data-aos="fade-down">
+        <div class="flex justify-between items-end text-[10px] md:text-xs font-typewriter uppercase tracking-widest px-2">
+            <span>Vol. XXVI - No. 12</span>
+            <span class="hidden md:block">Saturday, December 12, 2026</span>
+            <span>Price: One Eternal Love</span>
+        </div>
+        <div class="header-line my-2"></div>
+        <h1 class="font-serif-bold text-5xl md:text-8xl my-6 tracking-tighter uppercase">The Wedding Gazette</h1>
+        <div class="header-line my-2"></div>
+    </header>
+
+    <main class="max-w-5xl mx-auto aged-paper p-6 md:p-12 relative">
+        <div class="grid md:grid-cols-12 gap-10 items-center">
+            <div class="md:col-span-7 order-2 md:order-1" data-aos="fade-right">
+                <span class="font-typewriter text-xs text-red-800 font-bold uppercase tracking-[0.3em]">Breaking News</span>
+                <h2 class="font-serif-bold text-4xl md:text-6xl my-4 leading-none">
+                    Great Union Confirmed: {{ data.groom_name }} to Wed {{ data.bride_name }}
+                </h2>
+                <p class="font-serif text-lg md:text-xl italic text-gray-700 leading-relaxed">
+                    "In a spectacular turn of events that has captured the hearts of many, two remarkable souls have announced their intention to join in holy matrimony this winter."
+                </p>
+                <div class="mt-8 flex items-center gap-4">
+                    <div class="stamp-effect">Official</div>
+                    <p class="text-xs font-typewriter opacity-60 italic">Scan for digital location --></p>
+                </div>
+            </div>
+            <div class="md:col-span-5 order-1 md:order-2" data-aos="zoom-in">
+                <div class="vintage-frame">
+                    <img src="{{ data.hero_img if data.hero_img else 'https://images.unsplash.com/photo-1510076857177-7470076d4098?q=80&w=1000&auto=format&fit=crop' }}" class="w-full aspect-[4/5] object-cover sepia-img" alt="Main News Photo">
+                    <p class="font-typewriter text-[10px] mt-4 text-center text-gray-500 italic">Plate 1.0: Portrait of the Happy Couple</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="max-w-5xl mx-auto mt-12 grid md:grid-cols-2 gap-12">
+        <div class="aged-paper p-8 flex flex-col items-center text-center" data-aos="fade-up">
+            <div class="w-40 h-40 rounded-full border-4 border-white shadow-lg overflow-hidden mb-6 grayscale sepia-[0.5]">
+                <img src="{{ data.groom_img if data.groom_img else 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop' }}" class="w-full h-full object-cover">
+            </div>
+            <h3 class="font-serif-bold text-3xl mb-2">{{ data.groom_name }}</h3>
+            <p class="font-typewriter text-[10px] uppercase tracking-widest mb-4">The Groom</p>
+            <div class="w-full border-t border-black/10 pt-4">
+                <p class="text-xs italic opacity-70">Beloved son of:</p>
+                <p class="font-serif font-bold text-lg leading-tight mt-1">{{ data.groom_parents }}</p>
+            </div>
+        </div>
+
+        <div class="aged-paper p-8 flex flex-col items-center text-center" data-aos="fade-up" data-aos-delay="200">
+            <div class="w-40 h-40 rounded-full border-4 border-white shadow-lg overflow-hidden mb-6 grayscale sepia-[0.5]">
+                <img src="{{ data.bride_img if data.bride_img else 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop' }}" class="w-full h-full object-cover">
+            </div>
+            <h3 class="font-serif-bold text-3xl mb-2">{{ data.bride_name }}</h3>
+            <p class="font-typewriter text-[10px] uppercase tracking-widest mb-4">The Bride</p>
+            <div class="w-full border-t border-black/10 pt-4">
+                <p class="text-xs italic opacity-70">Beloved daughter of:</p>
+                <p class="font-serif font-bold text-lg leading-tight mt-1">{{ data.bride_parents }}</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto mt-12 aged-paper overflow-hidden">
+        <div class="bg-black text-white py-2 text-center font-typewriter text-xs uppercase tracking-[0.5em]">
+            Logistics & Intelligence
+        </div>
+        <div class="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-black/10">
+            <div class="p-10 text-center" data-aos="fade-up">
+                <p class="font-typewriter text-[10px] mb-4 text-red-800">Date</p>
+                <p class="font-serif-bold text-2xl uppercase tracking-tighter">{{ data.wedding_date if data.wedding_date else 'Dec 12, 2026' }}</p>
+            </div>
+            <div class="p-10 text-center" data-aos="fade-up" data-aos-delay="100">
+                <p class="font-typewriter text-[10px] mb-4 text-red-800">Commencement</p>
+                <p class="font-serif-bold text-2xl uppercase tracking-tighter">{{ data.wedding_time if data.wedding_time else '18:00' }} Sharp</p>
+            </div>
+            <div class="p-10 text-center" data-aos="fade-up" data-aos-delay="200">
+                <p class="font-typewriter text-[10px] mb-4 text-red-800">Location</p>
+                <p class="font-serif-bold text-xl uppercase leading-tight mb-6">{{ data.location_name if data.location_name else 'The Grand Heritage Hall' }}</p>
+                <a href="{{ data.maps_url }}" target="_blank" class="bg-black text-white px-6 py-2 font-typewriter text-[9px] uppercase hover:bg-red-800 transition-colors">
+                    Get Directions
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto py-24 text-center">
+        <div class="max-w-md mx-auto mb-12" data-aos="zoom-in">
+            <div class="vintage-frame bg-gray-100">
+                 <img src="{{ data.couple_img if data.couple_img else 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop' }}" class="w-full aspect-video object-cover grayscale sepia-[0.3]">
+            </div>
+        </div>
+        <h2 class="font-serif italic text-2xl md:text-4xl text-gray-800 px-6" data-aos="fade-up">
+            "We are all travelers in the wilderness of this world, and the best we can find in our travels is an honest friend."
+        </h2>
+    </section>
+
+    <footer class="max-w-5xl mx-auto border-t border-black/20 py-12 text-center font-typewriter opacity-40">
+        <p class="text-xs uppercase tracking-widest">&copy; 1926 - 2026 The Wedding Gazette Publishing Co.</p>
+        <p class="text-[9px] mt-2">All rights reserved to the happy couple.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true, offset: 150 });
+
+        function unlockInvitation() {
+            const screen = document.getElementById('welcome-screen');
+            screen.classList.add('unlocked');
+            document.body.style.overflow = 'auto';
+            setTimeout(() => { AOS.refresh(); }, 500);
+        }
+    </script>
 </body>
 </html>

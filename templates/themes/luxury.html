@@ -17,14 +17,13 @@
             --text-gray: #a0a0a0;
         }
 
-        /* Reset & Base */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-dark); color: #ffffff; overflow: hidden; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg-dark); color: #ffffff; overflow-x: hidden; width: 100%; }
         
         .font-luxury { font-family: 'Cormorant Garamond', serif; }
         .font-playfair { font-family: 'Playfair Display', serif; }
 
-        /* Welcome Screen - Fullscreen Overlay */
+        /* Welcome Screen */
         #welcome-screen {
             position: fixed; inset: 0; z-index: 10000;
             background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), 
@@ -34,284 +33,187 @@
             transition: all 1.2s cubic-bezier(0.7, 0, 0.3, 1);
         }
 
-        /* Gold Gradient Text */
         .gold-gradient {
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* Architectural Arch Frame */
         .arch-frame {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4/5;
-            border-radius: 500px 500px 0 0;
-            overflow: hidden;
-            border: 1px solid var(--gold);
-            padding: 10px;
+            position: relative; width: 100%; aspect-ratio: 4/5;
+            border-radius: 500px 500px 0 0; overflow: hidden;
+            border: 1px solid var(--gold); padding: 8px;
         }
         .arch-frame img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            border-radius: 500px 500px 0 0;
-            filter: sepia(30%) brightness(0.8);
-            transition: transform 1.5s ease;
+            width: 100%; height: 100%; object-fit: cover;
+            border-radius: 500px 500px 0 0; filter: sepia(20%) brightness(0.8);
         }
-        .arch-frame:hover img { transform: scale(1.1); }
 
-        /* Professional Button */
         .btn-luxury {
-            position: relative;
-            padding: 18px 40px;
-            border: 1px solid var(--gold);
-            background: transparent;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            font-size: 11px;
-            cursor: pointer;
-            transition: all 0.4s;
+            padding: 16px 32px; border: 1px solid var(--gold);
+            background: transparent; color: var(--gold);
+            text-transform: uppercase; letter-spacing: 4px;
+            font-size: 10px; cursor: pointer; transition: all 0.4s;
         }
-        .btn-luxury:hover { background: var(--gold); color: black; box-shadow: 0 10px 30px rgba(197, 160, 89, 0.2); }
+        .btn-luxury:hover { background: var(--gold); color: black; }
 
-        /* Floating Audio Control */
         #audio-toggle {
-            position: fixed; bottom: 30px; right: 30px; z-index: 999;
-            width: 45px; height: 45px; border-radius: 50%;
+            position: fixed; bottom: 20px; right: 20px; z-index: 999;
+            width: 40px; height: 40px; border-radius: 50%;
             background: rgba(0,0,0,0.6); border: 1px solid var(--gold);
             display: none; align-items: center; justify-content: center; cursor: pointer;
         }
 
-        /* Divider Decoration */
-        .ornament-line {
-            height: 1px; width: 100px;
-            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        /* Fix for large text on mobile */
+        @media (max-width: 640px) {
+            .mobile-text-responsive { font-size: 3.5rem !important; line-height: 1.1; }
+            .countdown-text { font-size: 2.5rem !important; }
         }
-
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.8; }
-        }
-        .pulse { animation: pulse-slow 3s infinite; }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased overflow-hidden">
 
     <div id="welcome-screen">
-        <div class="text-center space-y-12 px-6" data-aos="zoom-in">
+        <div class="text-center space-y-8 px-6" data-aos="zoom-in">
             <div class="space-y-4">
-                <p class="uppercase tracking-[1.2em] text-[10px] text-white/50">The Wedding Celebration of</p>
-                <h1 class="font-luxury text-6xl md:text-8xl italic gold-gradient">{{ data.groom_name }} & {{ data.bride_name }}</h1>
+                <p class="uppercase tracking-[0.8em] text-[9px] text-white/50">The Wedding Celebration of</p>
+                <h1 class="font-luxury text-5xl md:text-8xl italic gold-gradient mobile-text-responsive">
+                    {{ data.groom_name }} & {{ data.bride_name }}
+                </h1>
             </div>
-            <div class="pt-10">
-                <button onclick="unlockContent()" class="btn-luxury">Open Invitation</button>
-            </div>
+            <button onclick="unlockContent()" class="btn-luxury">Open Invitation</button>
         </div>
     </div>
 
     <audio id="bg-music" loop>
         <source src="https://www.chosic.com/wp-content/uploads/2021/07/The-Engagement.mp3" type="audio/mpeg">
     </audio>
-
-    <div id="audio-toggle" onclick="toggleAudio()" class="animate-spin-slow">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a059" stroke-width="1.5"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    <div id="audio-toggle" onclick="toggleAudio()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c5a059" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
     </div>
 
-    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000">
+    <main id="main-content" class="hidden opacity-0 transition-opacity duration-1000 overflow-x-hidden">
         
-        <main id="main-content" class="overflow-x-hidden">
-    
-    <section class="min-h-screen relative flex items-center justify-center py-20 px-6 overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-fixed bg-center opacity-10 blur-sm scale-110" 
-         style="background-image: url('{{ data.hero_img if data.hero_img else 'https://images.unsplash.com/photo-1519225421980-715cb0215aed' }}'); transition: transform 0.5s ease-out;"></div>
-    
-    <div class="absolute top-20 left-[10%] opacity-20 hidden md:block animate-[bounce_5s_infinite]">
-        <p class="font-luxury text-9xl gold-gradient select-none">✧</p>
-    </div>
+        <section class="min-h-screen relative flex items-center justify-center py-12 md:py-20 px-4 overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-fixed bg-center opacity-10 blur-sm scale-110" 
+                 style="background-image: url('{{ data.hero_img if data.hero_img else 'https://images.unsplash.com/photo-1519225421980-715cb0215aed' }}');"></div>
+            
+            <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+                <div class="relative mb-10" data-aos="fade-up">
+                    <div class="w-[240px] md:w-[350px] aspect-[3/4] rounded-t-full border border-[--gold] p-2">
+                        <div class="w-full h-full rounded-t-full overflow-hidden shadow-2xl">
+                            <img src="{{ data.couple_img if data.couple_img else 'https://images.unsplash.com/photo-1583939003579-730e3918a45a' }}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
 
-    <div class="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
-        <div class="relative mb-12" data-aos="zoom-out-up" data-aos-duration="2500">
-            <div class="relative z-10 w-[280px] md:w-[400px] aspect-[3/4] rounded-t-full border-[1px] border-[--gold] p-3 backdrop-blur-sm">
-                <div class="w-full h-full rounded-t-full overflow-hidden shadow-[0_0_50px_rgba(197,160,89,0.2)]">
-                    <img src="{{ data.couple_img if data.couple_img else 'https://images.unsplash.com/photo-1583939003579-730e3918a45a' }}" 
-                         alt="Romantic Couple" 
-                         class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-[4s] ease-in-out">
+                <div class="text-center space-y-4">
+                    <p class="uppercase tracking-[0.4em] text-[9px] text-[--gold] font-bold">The Wedding of</p>
+                    <h2 class="font-luxury text-5xl md:text-8xl italic gold-gradient mobile-text-responsive px-4">
+                        {{ data.groom_name }} <span class="font-playfair text-2xl md:text-5xl block md:inline">&</span> {{ data.bride_name }}
+                    </h2>
+                    <div class="border-y border-[--gold]/30 py-3 px-8 mt-4 inline-block">
+                        <p class="uppercase tracking-[0.4em] text-[10px] md:text-sm font-light">
+                            {{ data.wedding_date if data.wedding_date else '20 . 12 . 2026' }}
+                        </p>
+                    </div>
                 </div>
             </div>
-            <div class="absolute -bottom-6 -right-6 w-full h-full border-[1px] border-[--gold]/20 rounded-t-full -z-10 translate-x-4 translate-y-4 animate-[pulse_4s_infinite]"></div>
-        </div>
+        </section>
 
-        <div class="text-center space-y-6 relative">
-            <div class="flex items-center justify-center space-x-4 opacity-50" data-aos="fade-up" data-aos-delay="300">
-                <div class="h-[1px] w-12 bg-[--gold]"></div>
-                <p class="uppercase tracking-[0.5em] text-[9px] md:text-[11px] text-[--gold] font-bold">The Wedding of</p>
-                <div class="h-[1px] w-12 bg-[--gold]"></div>
+        <section class="py-20 px-6 max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="text-center md:text-right" data-aos="fade-right">
+                    <div class="arch-frame max-w-[280px] mx-auto md:ml-auto md:mr-0 mb-8 shadow-2xl">
+                        <img src="{{ data.groom_img if data.groom_img else 'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=800' }}">
+                    </div>
+                    <h3 class="font-luxury text-4xl gold-gradient italic mb-2">{{ data.groom_name }}</h3>
+                    <p class="text-[9px] tracking-widest text-gray-500 uppercase mb-1">Putra dari</p>
+                    <p class="text-xs text-white/80 uppercase tracking-widest">{{ data.groom_parents }}</p>
+                </div>
+                <div class="text-center md:text-left" data-aos="fade-left">
+                    <div class="arch-frame max-w-[280px] mx-auto md:mr-auto md:ml-0 mb-8 shadow-2xl">
+                        <img src="{{ data.bride_img if data.bride_img else 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800' }}">
+                    </div>
+                    <h3 class="font-luxury text-4xl gold-gradient italic mb-2">{{ data.bride_name }}</h3>
+                    <p class="text-[9px] tracking-widest text-gray-500 uppercase mb-1">Putri dari</p>
+                    <p class="text-xs text-white/80 uppercase tracking-widest">{{ data.bride_parents }}</p>
+                </div>
             </div>
+        </section>
 
-            <h2 class="font-luxury text-6xl md:text-9xl italic leading-none gold-gradient drop-shadow-2xl" 
-                data-aos="zoom-in" data-aos-delay="600" data-aos-duration="2000">
-                {{ data.groom_name }} <span class="font-playfair text-3xl md:text-6xl mx-2 block md:inline-block">&</span> {{ data.bride_name }}
-            </h2>
+        <section class="py-20 px-4">
+            <div class="max-w-3xl mx-auto bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 md:p-12">
+                <p class="text-center text-[9px] tracking-[0.5em] text-[--gold] mb-10 uppercase">Save The Date</p>
+                <div id="timer" class="flex justify-between items-center text-center">
+                    <div class="flex-1 border-r border-white/10 last:border-0">
+                        <span id="d" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
+                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Days</span>
+                    </div>
+                    <div class="flex-1 border-r border-white/10 last:border-0">
+                        <span id="h" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
+                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Hours</span>
+                    </div>
+                    <div class="flex-1 border-r border-white/10 last:border-0">
+                        <span id="m" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
+                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Mins</span>
+                    </div>
+                    <div class="flex-1">
+                        <span id="s" class="font-luxury text-3xl md:text-6xl gold-gradient block countdown-text">00</span>
+                        <span class="text-[8px] uppercase tracking-tighter text-gray-500">Secs</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            <div class="inline-block border-y border-[--gold]/30 py-4 px-12 mt-6" data-aos="fade-up" data-aos-delay="900">
-                <p class="uppercase tracking-[0.6em] text-[10px] md:text-[12px] font-light text-white/80">
-                    {{ data.wedding_date if data.wedding_date else '20 . 12 . 2026' }}
+        <section class="py-20 px-6 max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="font-luxury text-4xl md:text-6xl italic gold-gradient">The Events</h2>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-[#111] p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 md:items-center" data-aos="fade-up">
+                    <div class="md:w-1/3 text-center md:text-left">
+                        <h4 class="font-luxury text-3xl text-[--gold] italic">Akad Nikah</h4>
+                        <p class="text-[9px] text-gray-500 tracking-[0.3em] uppercase mt-1">The Ceremony</p>
+                    </div>
+                    <div class="md:flex-1 md:pl-8 md:border-l border-white/10">
+                        <p class="text-xs uppercase tracking-widest text-white mb-2">09:00 — 10:30 WIB</p>
+                        <p class="text-sm text-gray-400 leading-relaxed font-light">{{ data.location_name }}</p>
+                    </div>
+                </div>
+                <div class="bg-[#111] p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row gap-6 md:items-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="md:w-1/3 text-center md:text-left">
+                        <h4 class="font-luxury text-3xl text-[--gold] italic">Resepsi</h4>
+                        <p class="text-[9px] text-gray-500 tracking-[0.3em] uppercase mt-1">The Reception</p>
+                    </div>
+                    <div class="md:flex-1 md:pl-8 md:border-l border-white/10">
+                        <p class="text-xs uppercase tracking-widest text-white mb-2">11:00 — 14:00 WIB</p>
+                        <p class="text-sm text-gray-400 leading-relaxed font-light">{{ data.location_name }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-12 text-center">
+                <a href="{{ data.maps_url }}" target="_blank" class="btn-luxury inline-block w-full md:w-auto">View Venue Maps</a>
+            </div>
+        </section>
+
+        <section class="py-24 px-6 text-center">
+            <div class="max-w-2xl mx-auto space-y-6" data-aos="zoom-in">
+                <p class="font-luxury text-xl md:text-3xl italic text-gray-300 leading-relaxed">
+                    "Two souls with but a single thought; two hearts that beat as one."
                 </p>
+                <p class="text-[9px] tracking-[0.4em] text-[--gold] uppercase font-bold">— Friedrich Halm</p>
             </div>
-        </div>
+        </section>
 
-        <div class="mt-20 opacity-30 animate-bounce">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
-            </svg>
-        </div>
-    </div>
-</section>
-
-    <section class="py-32 px-6 max-w-7xl mx-auto overflow-hidden">
-    <div class="grid md:grid-cols-2 gap-16 md:gap-32 items-center">
-        
-        <div class="space-y-12 text-center md:text-right" data-aos="fade-right" data-aos-duration="1500">
-            <div class="relative group inline-block">
-                <div class="arch-frame mx-auto md:ml-auto md:mr-0 max-w-[320px] overflow-hidden rounded-t-full border border-[--gold]/30 p-2">
-                    <img src="{{ data.groom_img if data.groom_img else url_for('static', filename='images/default-groom.jpg') }}" 
-                         class="rounded-t-full grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" 
-                         alt="Groom">
-                </div>
-            </div>
-            <div class="space-y-4">
-                <h3 class="font-luxury text-5xl gold-gradient italic">{{ data.groom_name }}</h3>
-                <p class="text-[10px] tracking-widest text-gray-500 leading-loose uppercase">
-                    Putra dari <br>
-                    <span class="text-white font-medium">{{ data.groom_parents if data.groom_parents else 'Nama Orang Tua Pria' }}</span>
-                </p>
-            </div>
-        </div>
-
-        <div class="space-y-12 text-center md:text-left" data-aos="fade-left" data-aos-duration="1500">
-            <div class="relative group inline-block">
-                <div class="arch-frame mx-auto md:mr-auto md:ml-0 max-w-[320px] overflow-hidden rounded-t-full border border-[--gold]/30 p-2">
-                    <img src="{{ data.bride_img if data.bride_img else url_for('static', filename='images/default-bride.jpg') }}" 
-                         class="rounded-t-full grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" 
-                         alt="Bride">
-                </div>
-            </div>
-            <div class="space-y-4">
-                <h3 class="font-luxury text-5xl gold-gradient italic">{{ data.bride_name }}</h3>
-                <p class="text-[10px] tracking-widest text-gray-500 leading-loose uppercase">
-                    Putri dari <br>
-                    <span class="text-white font-medium">{{ data.bride_parents if data.bride_parents else 'Nama Orang Tua Wanita' }}</span>
-                </p>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-    <section class="py-24 bg-[#0a0a0a] border-y border-white/5 relative">
-        <div class="max-w-5xl mx-auto px-6 text-center">
-            <p class="text-[10px] tracking-[0.8em] uppercase text-[--gold] mb-16 opacity-70">The Countdown</p>
-            <div id="timer" class="flex justify-around items-center max-w-3xl mx-auto bg-white/5 backdrop-blur-md py-12 rounded-3xl border border-white/10 shadow-2xl">
-                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="100">
-                    <span id="d" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
-                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Days</span>
-                </div>
-                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="200">
-                    <span id="h" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
-                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Hours</span>
-                </div>
-                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="300">
-                    <span id="m" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
-                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Mins</span>
-                </div>
-                <div class="flex flex-col" data-aos="zoom-in" data-aos-delay="400">
-                    <span id="s" class="font-luxury text-5xl md:text-7xl gold-gradient">00</span>
-                    <span class="text-[9px] uppercase tracking-widest text-gray-600 mt-2">Secs</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-32 px-6">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-20" data-aos="fade-down">
-                <h2 class="font-luxury text-5xl italic gold-gradient">The Celebration</h2>
-            </div>
-
-            <div class="grid gap-12">
-                <div class="group relative bg-[#111] p-10 overflow-hidden border border-white/5 hover:border-[--gold]/50 transition-all duration-500 rounded-2xl" 
-                     data-aos="fade-up">
-                    <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l-5.5 9h11z"/></svg>
-                    </div>
-                    <div class="flex flex-col md:flex-row items-center relative z-10">
-                        <div class="md:w-1/3 text-center md:text-left mb-6 md:mb-0">
-                            <h4 class="font-luxury text-4xl italic text-[--gold]">The Ceremony</h4>
-                            <p class="text-[10px] tracking-widest text-gray-500 uppercase mt-2 italic">Akad Nikah</p>
-                        </div>
-                        <div class="md:w-2/3 md:pl-12 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0">
-                            <div class="space-y-4 text-center md:text-left">
-                                <p class="text-gray-300 tracking-widest uppercase text-xs">Pukul 09:00 — 10:30 WIB</p>
-                                <p class="text-lg text-white font-light tracking-wide">{{ data.location_name }}</p>
-                                <p class="text-gray-500 text-xs italic">Central Hall, Jakarta Selatan</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="group relative bg-[#111] p-10 overflow-hidden border border-white/5 hover:border-[--gold]/50 transition-all duration-500 rounded-2xl" 
-                     data-aos="fade-up" data-aos-delay="200">
-                    <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22l5.5-9h-11z"/></svg>
-                    </div>
-                    <div class="flex flex-col md:flex-row items-center relative z-10">
-                        <div class="md:w-1/3 text-center md:text-left mb-6 md:mb-0">
-                            <h4 class="font-luxury text-4xl italic text-[--gold]">The Reception</h4>
-                            <p class="text-[10px] tracking-widest text-gray-500 uppercase mt-2 italic">Resepsi</p>
-                        </div>
-                        <div class="md:w-2/3 md:pl-12 border-t md:border-t-0 md:border-l border-white/10 pt-6 md:pt-0">
-                            <div class="space-y-4 text-center md:text-left">
-                                <p class="text-gray-300 tracking-widest uppercase text-xs">Pukul 11:00 — 14:00 WIB</p>
-                                <p class="text-lg text-white font-light tracking-wide">{{ data.location_name }}</p>
-                                <p class="text-gray-500 text-xs italic">Grand Ballroom</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-20 text-center" data-aos="zoom-in">
-                <a href="{{ data.maps_url }}" target="_blank" 
-                   class="inline-block border border-[--gold] px-12 py-4 text-[10px] uppercase tracking-[0.5em] text-[--gold] hover:bg-[--gold] hover:text-black transition-all duration-500">
-                   Navigate to Venue
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-40 bg-[#050505] text-center px-6">
-        <div class="max-w-2xl mx-auto space-y-8" data-aos="fade-up">
-            <p class="font-luxury text-2xl md:text-4xl italic text-gray-300 leading-relaxed italic drop-shadow-lg">
-                "Two souls with but a single thought; two hearts that beat as one."
-            </p>
-            <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-[--gold] to-transparent mx-auto opacity-50"></div>
-            <p class="text-[10px] tracking-[0.5em] text-[--gold] uppercase font-bold">— Friedrich Halm</p>
-        </div>
-    </section>
-
-    <footer class="py-32 text-center border-t border-white/5 bg-[#080808]">
-        <div data-aos="zoom-out">
-            <h1 class="font-luxury text-4xl italic gold-gradient mb-6">{{ data.groom_name }} & {{ data.bride_name }}</h1>
-            <p class="text-[9px] tracking-[1em] uppercase text-gray-600 mb-8 italic">Wedding Invitation</p>
-            <div class="h-10 w-[1px] bg-[--gold]/30 mx-auto"></div>
-        </div>
-    </footer>
-</main>
+        <footer class="py-20 text-center border-t border-white/5">
+            <h1 class="font-luxury text-3xl md:text-5xl italic gold-gradient mb-4">{{ data.groom_name }} & {{ data.bride_name }}</h1>
+            <p class="text-[8px] tracking-[1em] uppercase text-gray-600">Wedding Invitation 2026</p>
+        </footer>
     </main>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1500, once: true });
+        AOS.init({ duration: 1200, once: true });
 
         function unlockContent() {
             const welcome = document.getElementById('welcome-screen');
@@ -329,33 +231,24 @@
                 audioBtn.style.display = 'flex';
                 document.body.style.overflow = 'auto';
                 music.play();
+                AOS.refresh();
             }, 1000);
         }
 
         function toggleAudio() {
             const music = document.getElementById('bg-music');
-            const btn = document.getElementById('audio-toggle');
-            if (music.paused) {
-                music.play();
-                btn.style.opacity = '1';
-            } else {
-                music.pause();
-                btn.style.opacity = '0.5';
-            }
+            music.paused ? music.play() : music.pause();
         }
 
-        // Countdown Script
+        // Countdown
         const targetDate = new Date("{{ data.wedding_date }}T{{ data.wedding_time if data.wedding_time else '09:00' }}").getTime();
-
         setInterval(() => {
-            const now = new Date().getTime();
-            const diff = targetDate - now;
-
+            const diff = targetDate - new Date().getTime();
             if (diff > 0) {
-                document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-                document.getElementById('h').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                document.getElementById('m').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                document.getElementById('s').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById('d').innerText = Math.floor(diff / (86400000));
+                document.getElementById('h').innerText = Math.floor((diff % 86400000) / 3600000);
+                document.getElementById('m').innerText = Math.floor((diff % 3600000) / 60000);
+                document.getElementById('s').innerText = Math.floor((diff % 60000) / 1000);
             }
         }, 1000);
     </script>

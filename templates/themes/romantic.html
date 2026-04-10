@@ -1,19 +1,254 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Wedding of {{ data.groom_name }} & {{ data.bride_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:italic,wght@0,700;1,700&family=Inter:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Plus+Jakarta+Sans:wght@200;400;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f4f7f4; color: #2d4a2d; }
-        .font-serif { font-family: 'Playfair Display', serif; }
+        :root {
+            --blush: #fff5f5;
+            --rose: #d53f8c;
+            --soft-text: #4a4a4a;
+        }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--blush); 
+            color: var(--soft-text);
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        
+        .font-cursive { font-family: 'Alex Brush', cursive; }
+        .font-serif { font-family: 'Cormorant Garamond', serif; }
+
+        /* WELCOME SCREEN (Premium Overlay) */
+        #welcome-screen {
+            position: fixed; inset: 0; z-index: 1000;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe4e6 100%);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 1s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        #welcome-screen.unlocked { transform: translateY(-100%); opacity: 0; }
+
+        /* RESPONSIVE UTILITIES */
+        .hero-min-height { min-height: 100vh; min-height: calc(var(--vh, 1vh) * 100); }
+        
+        /* FLUID TYPOGRAPHY */
+        .fluid-name { font-size: clamp(2.5rem, 8vw, 6rem); }
+        .fluid-title { font-size: clamp(3rem, 12vw, 9rem); }
+
+        /* IMAGE DECORATION */
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            padding: 10px;
+        }
+        .img-wrapper::before {
+            content: ''; position: absolute; inset: 0;
+            border: 1px solid var(--rose);
+            border-radius: 50%; opacity: 0.3;
+            transform: scale(1.05);
+        }
+
+        /* ANIMATIONS */
+        .heart-particle {
+            position: absolute; color: rgba(213, 63, 140, 0.2);
+            pointer-events: none; animation: heartRain linear infinite;
+        }
+        @keyframes heartRain {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .bg-ornament { background-image: url('https://www.transparenttextures.com/patterns/clean-gray-paper.png'); }
+
+        /* GLASS CARD OPTIMIZATION */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
-<body class="bg-[#fff5f5] text-[#d53f8c] flex items-center justify-center min-h-screen text-center">
-    <div class="animate-pulse">
-        <p class="text-pink-300 text-6xl mb-4">♥</p>
-        <h1 class="text-5xl font-serif italic">{{ data.groom_name }} & {{ data.bride_name }}</h1>
-        <p class="mt-4 tracking-widest text-gray-400">ARE GETTING MARRIED</p>
+<body class="bg-ornament antialiased">
+
+    <div id="welcome-screen">
+        <div id="heart-container" class="absolute inset-0 overflow-hidden"></div>
+        <div class="relative z-10 text-center px-4" data-aos="fade-up">
+            <div class="text-pink-400 text-4xl mb-4 animate-bounce">❤</div>
+            <p class="text-[10px] tracking-[0.5em] uppercase font-bold text-pink-500/60 mb-6">Wedding Invitation</p>
+            <h1 class="font-serif fluid-name leading-tight mb-12">
+                {{ data.groom_name }} <span class="font-cursive text-[--rose]">&</span> {{ data.bride_name }}
+            </h1>
+            <button onclick="unlockInvitation()" class="px-10 py-3.5 bg-[--rose] text-white rounded-full text-[11px] font-bold tracking-[0.2em] uppercase shadow-lg hover:shadow-pink-200/50 transition-all active:scale-95">
+                Open Invitation
+            </button>
+        </div>
     </div>
+
+    <main id="main-content">
+        <section class="hero-min-height relative flex items-center justify-center overflow-hidden px-4">
+            <div class="absolute inset-0 z-0">
+                <img src="{{ data.hero_img if data.hero_img else 'https://images.unsplash.com/photo-1519225421980-715cb0215aed' }}" 
+                     class="w-full h-full object-cover opacity-20 scale-110" alt="Hero">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[--blush]/50 to-[--blush]"></div>
+            </div>
+
+            <div class="relative z-10 text-center w-full max-w-4xl" data-aos="zoom-out" data-aos-duration="2000">
+                <p class="text-[11px] tracking-[0.6em] uppercase font-semibold text-[--rose] mb-8">Save the Date</p>
+                <h1 class="font-serif fluid-title font-light leading-[0.9] mb-6">
+                    {{ data.groom_name }} <br>
+                    <span class="font-cursive text-4xl md:text-7xl text-[--rose] block my-2 md:my-6">&</span>
+                    {{ data.bride_name }}
+                </h1>
+                <p class="font-serif italic text-xl md:text-3xl text-gray-500 mt-6">Are getting married</p>
+                <div class="mt-12 flex flex-col items-center">
+                    <div class="h-16 w-[1px] bg-gradient-to-b from-pink-300 to-transparent"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 md:py-32 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-4 flex items-center">
+                    
+                    <div class="flex flex-col items-center text-center md:items-end md:text-right" data-aos="fade-right">
+                        <div class="img-wrapper mb-8">
+                            <img src="{{ data.groom_img if data.groom_img else 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d' }}" 
+                                 class="w-48 h-48 md:w-72 md:h-72 object-cover rounded-full shadow-2xl border-4 border-white">
+                        </div>
+                        <h3 class="font-cursive text-5xl text-[--rose] mb-3">{{ data.groom_name }}</h3>
+                        <p class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 mb-4">The Groom</p>
+                        <p class="text-sm md:text-base leading-relaxed text-gray-500 max-w-xs">Putra dari <br> <span class="font-semibold text-gray-700">{{ data.groom_parents }}</span></p>
+                    </div>
+
+                    <div class="flex flex-col items-center text-center md:items-start md:text-left" data-aos="fade-left">
+                        <div class="img-wrapper mb-8">
+                            <img src="{{ data.bride_img if data.bride_img else 'https://images.unsplash.com/photo-1494790108377-be9c29b29330' }}" 
+                                 class="w-48 h-48 md:w-72 md:h-72 object-cover rounded-full shadow-2xl border-4 border-white">
+                        </div>
+                        <h3 class="font-cursive text-5xl text-[--rose] mb-3">{{ data.bride_name }}</h3>
+                        <p class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 mb-4">The Bride</p>
+                        <p class="text-sm md:text-base leading-relaxed text-gray-500 max-w-xs">Putri dari <br> <span class="font-semibold text-gray-700">{{ data.bride_parents }}</span></p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 md:py-32 px-4 relative overflow-hidden bg-white/30">
+    <div class="max-w-5xl mx-auto">
+        
+        <div class="text-center mb-16 md:mb-24" data-aos="fade-up">
+            <span class="text-[10px] tracking-[0.8em] uppercase text-[--rose] font-bold mb-4 block">Event Details</span>
+            <h2 class="font-serif text-4xl md:text-5xl italic text-gray-800">The Celebration</h2>
+            <div class="mt-6 flex items-center justify-center gap-4">
+                <div class="h-[1px] w-12 bg-pink-200"></div>
+                <div class="text-[--rose] text-xs">❤</div>
+                <div class="h-[1px] w-12 bg-pink-200"></div>
+            </div>
+        </div>
+
+        <div class="relative group" data-aos="fade-up" data-aos-delay="200">
+            <div class="absolute -inset-4 border border-pink-100 rounded-[3rem] pointer-events-none hidden md:block transition-transform group-hover:scale-[1.02] duration-700"></div>
+            
+            <div class="glass-card relative z-10 rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-2xl shadow-pink-200/20 border border-white">
+                <div class="grid grid-cols-1 md:grid-cols-2">
+                    
+                    <div class="p-10 md:p-20 flex flex-col items-center text-center bg-white/40">
+                        <div class="mb-8 p-4 rounded-full bg-gradient-to-br from-pink-50 to-white shadow-sm">
+                            <svg class="w-6 h-6 text-[--rose]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h4 class="font-serif text-sm tracking-[0.3em] uppercase text-gray-400 mb-6">Wedding Ceremony</h4>
+                        <div class="space-y-2">
+                            <p class="font-serif text-3xl md:text-4xl text-gray-800">{{ data.wedding_date }}</p>
+                            <p class="text-sm font-light tracking-widest text-[--rose] uppercase">{{ data.wedding_time }} — Selesai</p>
+                        </div>
+                        <div class="mt-8 pt-8 border-t border-pink-50 w-full max-w-[150px]">
+                            <p class="text-[10px] text-gray-400 leading-relaxed italic">Mohon kehadiran tepat waktu untuk mengikuti prosesi khidmat</p>
+                        </div>
+                    </div>
+
+                    <div class="p-10 md:p-20 flex flex-col items-center text-center bg-gradient-to-b from-white/10 to-transparent md:border-l md:border-pink-50">
+                        <div class="mb-8 p-4 rounded-full bg-gradient-to-br from-pink-50 to-white shadow-sm">
+                            <svg class="w-6 h-6 text-[--rose]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <h4 class="font-serif text-sm tracking-[0.3em] uppercase text-gray-400 mb-6">The Venue</h4>
+                        <div class="space-y-3">
+                            <p class="font-serif text-2xl md:text-3xl text-gray-800 leading-tight px-4">{{ data.location_name }}</p>
+                            <p class="text-xs text-gray-400 font-light max-w-[200px] mx-auto uppercase tracking-tighter">Klik tombol di bawah untuk navigasi GPS</p>
+                        </div>
+                        <div class="mt-10">
+                            <a href="{{ data.maps_url }}" target="_blank" 
+                               class="group relative inline-flex items-center justify-center px-10 py-4 overflow-hidden font-bold rounded-full transition-all duration-300 active:scale-95">
+                                <span class="absolute inset-0 w-full h-full bg-[--rose]"></span>
+                                <span class="absolute inset-0 w-full h-full bg-pink-700 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500"></span>
+                                <span class="relative text-white text-[10px] tracking-[0.3em] flex items-center gap-3">
+                                    GOOGLE MAPS
+                                    <svg class="w-3 h-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <footer class="py-24 text-center px-6">
+            <div class="h-[1px] w-24 bg-pink-200 mx-auto mb-12"></div>
+            <p class="font-serif italic text-xl text-gray-400 mb-4">Love never fails.</p>
+            <p class="font-cursive text-5xl text-[--rose] mb-8">{{ data.groom_name }} & {{ data.bride_name }}</p>
+            <p class="text-[9px] tracking-[0.5em] uppercase text-gray-300 font-bold">The Romantic Edition</p>
+        </footer>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1200, once: true });
+
+        // Optimized VH for mobile
+        const setVh = () => {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        window.addEventListener('resize', setVh);
+        setVh();
+
+        function createHearts() {
+            const container = document.getElementById('heart-container');
+            const heartCount = window.innerWidth < 768 ? 12 : 25;
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-particle';
+                heart.innerText = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        function unlockInvitation() {
+            document.getElementById('welcome-screen').classList.add('unlocked');
+            document.body.style.overflowY = 'auto';
+            setTimeout(() => { AOS.refresh(); }, 400);
+        }
+    </script>
 </body>
 </html>

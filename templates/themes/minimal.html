@@ -2,54 +2,249 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wedding | {{ data.groom_name }} & {{ data.bride_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Wedding of {{ data.groom_name }} & {{ data.bride_name }}</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@100;300;400;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #fcfaf7; color: #333; }
+        :root {
+            --bg: #fcfaf7;
+            --text: #1a1a1a;
+            --muted: #8c8c8c;
+            --accent: #d4af37;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text);
+            overflow: hidden;
+            scroll-behavior: smooth;
+        }
+        
         .font-serif { font-family: 'Cormorant Garamond', serif; }
-        .line-animation {
-            height: 100px;
-            width: 1px;
-            background-color: #333;
-            margin: 0 auto;
+
+        /* Welcome Screen Luxury Upgrade */
+        #welcome-screen {
+            position: fixed; inset: 0; z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            background-color: var(--bg);
+            transition: all 1.5s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+
+        #welcome-screen.unlocked {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        /* Image Mask Reveal */
+        .reveal-frame {
+            position: relative;
+            overflow: hidden;
+            background: #e5e5e5;
+        }
+        
+        .reveal-frame img {
+            transform: scale(1.3);
+            transition: transform 3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .aos-animate .reveal-frame img {
+            transform: scale(1);
+        }
+
+        /* Floating Element Animation */
+        .float-anim { animation: float 6s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Responsive Text Adjustment */
+        @media (max-width: 768px) {
+            .mobile-title { font-size: 3.5rem !important; }
+            .mobile-grid { grid-template-columns: 1fr !important; }
+        }
+
+        /* Custom Button */
+        .btn-luxury {
+            position: relative;
+            padding: 1.2rem 3rem;
+            border: 1px solid var(--text);
+            background: transparent;
+            overflow: hidden;
+            transition: color 0.4s ease;
+            z-index: 1;
+        }
+
+        .btn-luxury::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 0; height: 100%;
+            background: var(--text);
+            transition: width 0.4s ease;
+            z-index: -1;
+        }
+
+        .btn-luxury:hover { color: white; }
+        .btn-luxury:hover::before { width: 100%; }
+
+        /* Background Text */
+        .bg-text {
+            position: absolute;
+            font-size: 15vw;
+            font-weight: 800;
+            color: rgba(0,0,0,0.03);
+            white-space: nowrap;
+            z-index: -1;
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center text-center p-8">
-    
-    <div class="mb-16 space-y-4">
-        <p class="text-[10px] tracking-[0.4em] uppercase font-light text-gray-500">Invitation</p>
-        <div class="line-animation"></div>
-    </div>
+<body class="antialiased">
 
-    <div class="mb-20">
-        <h1 class="font-serif text-5xl md:text-7xl font-light tracking-tight mb-4">
-            {{ data.groom_name }} <span class="text-xl align-middle italic text-gray-400 mx-4">and</span> {{ data.bride_name }}
-        </h1>
-        <p class="text-gray-400 font-light text-sm italic mt-6">Kami mengundang Anda untuk merayakan hari bahagia kami.</p>
-    </div>
-
-    <div class="grid grid-cols-3 gap-4 w-full max-w-xs border-y border-gray-200 py-6 mb-12">
-        <div class="text-center border-r border-gray-100">
-            <p class="text-[9px] uppercase tracking-widest text-gray-400 mb-1">Date</p>
-            <p class="text-xs font-medium">12.12.26</p>
-        </div>
-        <div class="text-center border-r border-gray-100">
-            <p class="text-[9px] uppercase tracking-widest text-gray-400 mb-1">Time</p>
-            <p class="text-xs font-medium">09:00 AM</p>
-        </div>
-        <div class="text-center">
-            <p class="text-[9px] uppercase tracking-widest text-gray-400 mb-1">Place</p>
-            <p class="text-xs font-medium">Jakarta</p>
+    <div id="welcome-screen">
+        <div class="text-center px-6 w-full max-w-lg" data-aos="fade-up">
+            <div class="mb-8 overflow-hidden">
+                <p class="text-[10px] tracking-[0.6em] uppercase text-[var(--muted)]">Wedding Invitation</p>
+            </div>
+            <h1 class="font-serif text-5xl md:text-7xl mb-12 italic leading-tight">
+                {{ data.groom_name }} <span class="text-xl not-italic block my-2">&</span> {{ data.bride_name }}
+            </h1>
+            <button onclick="unlockInvitation()" class="btn-luxury text-[10px] tracking-[0.5em] uppercase">
+                Open Invitation
+            </button>
         </div>
     </div>
 
-    <div class="space-y-6">
-        <div class="line-animation"></div>
-        <p class="text-[9px] tracking-[0.5em] uppercase font-bold text-gray-800">Wedding.ID</p>
-    </div>
+    <main id="main-content" class="opacity-0 transition-opacity duration-1000">
+        
+        <section class="min-h-screen flex items-center justify-center p-6 md:p-20 relative overflow-hidden">
+            <div class="bg-text top-20 -left-20">CELEBRATE</div>
+            
+            <div class="max-w-7xl w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                <div class="md:col-span-5 order-2 md:order-1" data-aos="fade-right">
+                    <p class="text-[11px] tracking-[0.5em] uppercase text-[var(--muted)] mb-6">Honoring Our Love</p>
+                    <h2 class="font-serif text-6xl md:text-[9rem] leading-[0.85] mb-8 mobile-title">
+                        {{ data.groom_name }}<br>
+                        <span class="italic text-[var(--accent)] font-light">&</span><br>
+                        {{ data.bride_name }}
+                    </h2>
+                    <p class="max-w-xs text-sm text-[var(--muted)] leading-relaxed">
+                        Together with our families, we invite you to share in our joy as we begin our life together.
+                    </p>
+                </div>
+                
+                <div class="md:col-span-7 order-1 md:order-2" data-aos="zoom-out">
+                    <div class="reveal-frame aspect-[4/5] md:aspect-[16/11] shadow-2xl rounded-sm">
+                        <img src="{{ data.hero_img if data.hero_img else 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200' }}" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <section class="py-32 px-6 bg-[#f8f6f2]">
+            <div class="max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-40 items-start">
+                    <div class="group" data-aos="fade-up">
+                        <div class="reveal-frame aspect-[3/4] mb-10 overflow-hidden rounded-t-full shadow-lg">
+                            <img src="{{ data.groom_img if data.groom_img else 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800' }}" 
+                                 class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000">
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h3 class="font-serif text-5xl mb-4 italic">{{ data.groom_name }}</h3>
+                            <div class="h-[1px] w-12 bg-[var(--accent)] mx-auto md:ml-0 mb-4"></div>
+                            <p class="text-[10px] tracking-[0.2em] uppercase text-[var(--muted)] mb-2">The Groom</p>
+                            <p class="text-sm font-light">Son of {{ data.groom_parents }}</p>
+                        </div>
+                    </div>
+
+                    <div class="group md:mt-40" data-aos="fade-up" data-aos-delay="200">
+                        <div class="reveal-frame aspect-[3/4] mb-10 overflow-hidden rounded-t-full shadow-lg">
+                            <img src="{{ data.bride_img if data.bride_img else 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800' }}" 
+                                 class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000">
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h3 class="font-serif text-5xl mb-4 italic">{{ data.bride_name }}</h3>
+                            <div class="h-[1px] w-12 bg-[var(--accent)] mx-auto md:ml-0 mb-4"></div>
+                            <p class="text-[10px] tracking-[0.2em] uppercase text-[var(--muted)] mb-2">The Bride</p>
+                            <p class="text-sm font-light">Daughter of {{ data.bride_parents }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 px-6 relative overflow-hidden">
+            <div class="bg-text bottom-10 right-0">EVENTS</div>
+            <div class="max-w-3xl mx-auto text-center">
+                <div class="mb-20" data-aos="fade-down">
+                    <h2 class="font-serif text-5xl md:text-7xl mb-6">The Wedding Day</h2>
+                    <p class="text-[10px] tracking-[0.6em] uppercase text-[var(--muted)]">Save Our Date</p>
+                </div>
+
+                <div class="bg-white p-12 md:p-20 shadow-xl border border-gray-50 rounded-sm" data-aos="zoom-in">
+                    <div class="flex flex-col md:flex-row justify-between gap-12 items-center text-center">
+                        <div>
+                            <p class="text-[9px] uppercase tracking-widest text-[var(--accent)] mb-2 font-bold">When</p>
+                            <p class="font-serif text-2xl">{{ data.wedding_date }}</p>
+                            <p class="text-xs text-gray-500 mt-1 italic">{{ data.wedding_time }}</p>
+                        </div>
+                        <div class="h-[1px] w-12 md:h-12 md:w-[1px] bg-gray-200"></div>
+                        <div>
+                            <p class="text-[9px] uppercase tracking-widest text-[var(--accent)] mb-2 font-bold">Where</p>
+                            <p class="font-serif text-2xl">{{ data.location_name }}</p>
+                            <p class="text-xs text-gray-500 mt-1 max-w-[180px] mx-auto leading-relaxed">Central Jakarta, Indonesia</p>
+                        </div>
+                    </div>
+
+                    <a href="{{ data.maps_url }}" target="_blank" 
+                       class="inline-block mt-16 px-10 py-4 bg-[var(--text)] text-white text-[10px] tracking-[0.4em] uppercase hover:bg-gray-800 transition-all">
+                        Navigate to Venue
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-32 bg-white text-center">
+            <div class="max-w-sm mx-auto px-6">
+                <h4 class="font-serif text-3xl mb-8 italic">Thank You</h4>
+                <p class="text-xs leading-relaxed text-[var(--muted)] font-light">
+                    Your presence is the greatest gift of all. We can't wait to celebrate this special day with you.
+                </p>
+                <div class="mt-12 pt-12 border-t border-gray-100">
+                    <p class="text-[10px] tracking-[0.8em] uppercase font-bold text-gray-400">#OurStory2026</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1200, once: true, easing: 'ease-in-out' });
+
+        function unlockInvitation() {
+            const welcome = document.getElementById('welcome-screen');
+            const main = document.getElementById('main-content');
+            
+            welcome.classList.add('unlocked');
+            
+            setTimeout(() => {
+                main.classList.remove('opacity-0');
+                document.body.style.overflow = 'auto';
+                AOS.refresh();
+            }, 500);
+
+            // Cleanup welcome screen
+            setTimeout(() => {
+                welcome.style.display = 'none';
+            }, 1500);
+        }
+    </script>
 </body>
 </html>
